@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { PostCard, Post } from '../components/PostCard';
-import { CommunitySidebar } from '../components/CommunitySidebar';
-import { CreatePostModal } from '../components/CreatePostModal';
-import { getAllPosts, savePost, votePost } from '../api/communityApi';
-import { toast } from 'sonner@2.0.3';
-import { formatDistanceToNow } from 'date-fns';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { PostCard, Post } from "../components/PostCard";
+import { CommunitySidebar } from "../components/CommunitySidebar";
+import { CreatePostModal } from "../components/CreatePostModal";
+import { getAllPosts, savePost, votePost } from "../api/communityApi";
+import { toast } from "sonner@2.0.3";
+import { formatDistanceToNow } from "date-fns";
 
 export function CommunityPage() {
   const navigate = useNavigate();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,10 +20,9 @@ export function CommunityPage() {
       post.authorName ??
       post.author?.name ??
       post.user?.name ??
-      'Anonymous';
+      "Anonymous";
 
-    const authorAvatar =
-      `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(authorName)}`;
+    const authorAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(authorName)}`;
 
     const tags =
       post.tags?.map((tag: any) => tag.name ?? tag) ??
@@ -33,7 +32,7 @@ export function CommunityPage() {
     const createdAtValue = post.createdAt ?? post.timestamp;
     const timestamp = createdAtValue
       ? formatDistanceToNow(new Date(createdAtValue), { addSuffix: true })
-      : 'Just now';
+      : "Just now";
 
     return {
       id: String(post.id),
@@ -41,9 +40,9 @@ export function CommunityPage() {
         name: authorName,
         avatar: authorAvatar,
       },
-      title: post.title ?? '',
-      content: post.content ?? '',
-      imageUrl: post.imageUrl ?? '',
+      title: post.title ?? "",
+      content: post.content ?? "",
+      imageUrl: post.imageUrl ?? "",
       tags,
       upvotes: post.votes ?? post.upvotes ?? post.voteCount ?? 0,
       comments: post.commentsCount ?? post.comments ?? 0,
@@ -57,10 +56,10 @@ export function CommunityPage() {
     setLoading(true);
     try {
       const data = await getAllPosts();
-      const postsData = Array.isArray(data) ? data : data?.data ?? [];
+      const postsData = Array.isArray(data) ? data : (data?.data ?? []);
       setPosts(postsData.map(mapApiPostToPostCard));
     } catch (error) {
-      toast.error('Failed to load community posts');
+      toast.error("Failed to load community posts");
       setPosts([]);
     } finally {
       setLoading(false);
@@ -89,10 +88,10 @@ export function CommunityPage() {
             currentUserVote: nextVote,
             upvotes: post.upvotes + votesDelta,
           };
-        })
+        }),
       );
     } catch (error) {
-      toast.error('Failed to submit vote');
+      toast.error("Failed to submit vote");
     }
   };
 
@@ -101,29 +100,30 @@ export function CommunityPage() {
       await savePost(postId);
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
-          post.id === postId
-            ? { ...post, isSaved: !post.isSaved }
-            : post
-        )
+          post.id === postId ? { ...post, isSaved: !post.isSaved } : post,
+        ),
       );
     } catch (error) {
-      toast.error('Failed to update saved post');
+      toast.error("Failed to update saved post");
     }
   };
 
   // Filter posts based on selected category
-  const filteredPosts = selectedCategory === 'all' 
-    ? posts
-    : posts.filter(post => {
-        const categoryMap: { [key: string]: string[] } = {
-          'recipes': ['Recipes'],
-          'tips': ['Tips', 'Kitchen Tips'],
-          'reviews': ['Products', 'Product Reviews'],
-          'questions': ['Questions'],
-          'budget': ['Budget Meals'],
-        };
-        return post.tags.some(tag => categoryMap[selectedCategory]?.includes(tag));
-      });
+  const filteredPosts =
+    selectedCategory === "all"
+      ? posts
+      : posts.filter((post) => {
+          const categoryMap: { [key: string]: string[] } = {
+            recipes: ["Recipes"],
+            tips: ["Tips", "Kitchen Tips"],
+            reviews: ["Products", "Product Reviews"],
+            questions: ["Questions"],
+            budget: ["Budget Meals"],
+          };
+          return post.tags.some((tag) =>
+            categoryMap[selectedCategory]?.includes(tag),
+          );
+        });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -132,8 +132,8 @@ export function CommunityPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <h1 className="text-white mb-2">Community</h1>
           <p className="text-green-50 max-w-2xl">
-            Connect with fellow food lovers, share recipes, get cooking tips, and discover new products. 
-            Join the conversation!
+            Connect with fellow food lovers, share recipes, get cooking tips,
+            and discover new products. Join the conversation!
           </p>
         </div>
       </div>
@@ -149,8 +149,8 @@ export function CommunityPage() {
               </div>
             ) : filteredPosts.length > 0 ? (
               filteredPosts.map((post) => (
-                <PostCard 
-                  key={post.id} 
+                <PostCard
+                  key={post.id}
                   post={post}
                   onVote={handleVote}
                   onSave={handleSavePost}
@@ -160,7 +160,9 @@ export function CommunityPage() {
               ))
             ) : (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                <p className="text-gray-500">No posts found in this category.</p>
+                <p className="text-gray-500">
+                  No posts found in this category.
+                </p>
               </div>
             )}
           </div>

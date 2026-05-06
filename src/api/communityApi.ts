@@ -15,8 +15,9 @@ export const getPostById = async (id) => {
   return response.data;
 };
 
-export const deletePost = async (id) => {
-  await axiosInstance.delete(`/Posts/${id}`);
+export const deletePost = async (id: number | string) => {
+  const res = await axiosInstance.delete(`/Posts/${id}`);
+  return res.data;
 };
 
 export const savePost = async (postId) => {
