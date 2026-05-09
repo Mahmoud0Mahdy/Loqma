@@ -45,7 +45,6 @@ export function OrderDetailsDialog({ isOpen, onClose, order }: OrderDetailsDialo
              <div>
                <h4 className="text-xs font-bold text-gray-400 uppercase mb-2">Customer Info</h4>
                <p className="font-medium text-gray-900">{order.userName || "Guest User"}</p>
-               <p className="text-sm text-gray-500">{order.userEmail || "No email provided"}</p>
              </div>
              <div>
                <h4 className="text-xs font-bold text-gray-400 uppercase mb-2">Order Info</h4>
