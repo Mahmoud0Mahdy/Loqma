@@ -13,8 +13,8 @@ import { MapPin, ShieldCheck } from "lucide-react";
 import { validateField } from "../validation/shippingValidation";
 import { FormField } from "../components/form/PaymentForm";
 import { Input } from "../../../components/ui/input";
+import "./components_css/PaymentForm.css"; // <-- Import the new CSS file
 
-// 1. Defined strict TypeScript interfaces to replace `any`
 interface ShippingFormData {
   fullName?: string;
   email?: string;
@@ -43,13 +43,11 @@ export function ShippingForm({
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  // 2. Memoized required fields to avoid recreating the array on every render
   const requiredFields = useMemo(
     () => ["fullName", "email", "address", "city", "state", "zipCode"],
     []
   );
 
-  // 3. Consolidated formatting into a clean switch statement and added useCallback
   const handleChange = useCallback(
     (field: string, rawValue: string) => {
       let value = rawValue;
@@ -103,23 +101,22 @@ export function ShippingForm({
     [touched, errors, formData]
   );
 
+  // Updated to return standard CSS classes
   const inputStyle = useCallback(
     (f: string) => {
       if (fieldError(f)) {
-        return "border-red-500 focus-visible:ring-red-500";
+        return "form-input error";
       }
-      return "focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500";
+      return "form-input valid";
     },
     [fieldError]
   );
 
-  // 4. Memoized to prevent calculating this on every single render
   const disableContinue = useMemo(() => {
     return requiredFields.some((field) => !formData[field] || errors[field]);
   }, [requiredFields, formData, errors]);
 
   const handleContinue = useCallback(() => {
-    // Added fallbacks to prevent "undefined" showing up in the full string
     const fullAddress = `${formData.address || ""}, ${formData.city || ""}, ${
       formData.state || ""
     }`;
@@ -129,37 +126,33 @@ export function ShippingForm({
   }, [formData, handleInputChange, nextStep]);
 
   return (
-    <Card className="shadow-md border border-gray-200">
-      <CardHeader className="pb-4 border-b border-gray-100 mb-4">
-        <CardTitle className="flex items-center text-xl font-bold text-gray-800">
-          <MapPin size={22} className="mr-2 text-green-600" />
+    <Card className="shipping-card">
+      <CardHeader className="shipping-card-header">
+        <CardTitle className="shipping-card-title">
+          <MapPin size={22} className="icon-accent" />
           Shipping Information
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-8">
+      <CardContent className="shipping-card-content">
         {/* SECTION: PERSONAL INFO */}
-        <div className="space-y-5">
-          <div>
-            <Label className="text-sm font-semibold text-gray-700 mb-1.5 block">
-              Full Name
-            </Label>
+        <div className="form-section">
+          <div className="input-wrapper">
+            <Label className="field-label">Full Name</Label>
             <Input
               value={formData?.fullName || ""}
               disabled
-              className="h-12 border-gray-200 rounded-lg bg-gray-50 text-gray-600 font-medium"
+              className="form-input disabled"
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <Label className="text-sm font-semibold text-gray-700 mb-1.5 block">
-                Email
-              </Label>
+          <div className="grid-layout cols-2">
+            <div className="input-wrapper">
+              <Label className="field-label">Email</Label>
               <Input
                 value={formData?.email || ""}
                 disabled
-                className="h-12 bg-gray-50 border border-gray-200 text-gray-600 font-medium"
+                className="form-input disabled"
               />
             </div>
 
@@ -179,10 +172,8 @@ export function ShippingForm({
         </div>
 
         {/* SECTION: ADDRESS */}
-        <div className="space-y-5 pt-4 border-t border-gray-100">
-          <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">
-            Address Details
-          </h3>
+        <div className="form-section border-top">
+          <h3 className="section-title">Address Details</h3>
 
           <FormField
             label="Address"
@@ -197,7 +188,7 @@ export function ShippingForm({
             fieldValid={fieldValid}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid-layout cols-3">
             <FormField
               label="City"
               name="city"
@@ -237,40 +228,33 @@ export function ShippingForm({
         </div>
 
         {/* SECTION: DELIVERY METHOD */}
-        <div className="space-y-4 pt-4 border-t border-gray-100">
-          <Label className="text-sm font-bold text-gray-800 uppercase tracking-wider block mb-3">
-            Delivery Method
-          </Label>
+        <div className="form-section border-top">
+          <Label className="section-title mb-custom">Delivery Method</Label>
 
           <RadioGroup
             value={formData.deliveryMethod || "standard"}
             onValueChange={(v) => handleInputChange("deliveryMethod", v)}
-            className="grid gap-4"
+            className="radio-group"
           >
-            {/* 🔥 BUG FIX: Changed wrapper from div to label and matched htmlFor. Entire block is now clickable. */}
             <label
               htmlFor="standard"
-              className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${
+              className={`delivery-option ${
                 (formData.deliveryMethod || "standard") === "standard"
-                  ? "border-green-600 bg-green-50/40"
-                  : "border-gray-100 hover:border-gray-200"
+                  ? "active"
+                  : ""
               }`}
             >
               <RadioGroupItem
                 value="standard"
                 id="standard"
-                className="text-green-600"
+                className="radio-item"
               />
-              <div className="flex flex-col w-full flex-1">
-                <span className="font-semibold text-gray-900">
-                  Standard Delivery
-                </span>
-                <span className="text-sm text-gray-500 mt-0.5">
+              <div className="delivery-details">
+                <span className="delivery-title">Standard Delivery</span>
+                <span className="delivery-subtitle">
                   3-5 business days —{" "}
                   {subtotal > 50 ? (
-                    <span className="text-green-600 font-bold uppercase text-xs ml-1">
-                      Free
-                    </span>
+                    <span className="free-badge">Free</span>
                   ) : (
                     "$5.99"
                   )}
@@ -278,27 +262,21 @@ export function ShippingForm({
               </div>
             </label>
 
-            {/* Express Option */}
             <label
               htmlFor="express"
-              className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${
-                formData.deliveryMethod === "express"
-                  ? "border-green-600 bg-green-50/40"
-                  : "border-gray-100 hover:border-gray-200"
+              className={`delivery-option ${
+                formData.deliveryMethod === "express" ? "active" : ""
               }`}
             >
               <RadioGroupItem
                 value="express"
                 id="express"
-                className="text-green-600"
+                className="radio-item"
               />
-              <div className="flex flex-col w-full flex-1">
-                <span className="font-semibold text-gray-900">
-                  Express Delivery
-                </span>
-                <span className="text-sm text-gray-500 mt-0.5">
-                  1-2 business days —{" "}
-                  <span className="font-medium text-gray-700">$12.99</span>
+              <div className="delivery-details">
+                <span className="delivery-title">Express Delivery</span>
+                <span className="delivery-subtitle">
+                  1-2 business days — <span className="price-badge">$12.99</span>
                 </span>
               </div>
             </label>
@@ -306,21 +284,19 @@ export function ShippingForm({
         </div>
 
         {/* SECTION: BUTTON */}
-        <div className="pt-6">
+        <div className="action-section">
           <Button
             type="button"
             disabled={disableContinue}
             onClick={handleContinue}
-            className="w-full h-14 bg-green-600 hover:bg-green-700 text-white text-[16px] font-bold rounded-xl shadow-md transition-transform active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+            className="submit-btn"
           >
             Continue to Payment
           </Button>
 
-          <div className="flex items-center justify-center space-x-1.5 mt-4 text-gray-400">
+          <div className="secure-badge">
             <ShieldCheck size={16} />
-            <span className="text-xs font-medium tracking-wide">
-              Secure SSL Encrypted Connection
-            </span>
+            <span>Secure SSL Encrypted Connection</span>
           </div>
         </div>
       </CardContent>
