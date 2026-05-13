@@ -1,266 +1,173 @@
-import { useState } from "react";
-
+import { useState, useCallback, useMemo } from "react";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../../components/ui/card";
-
 import { Button } from "../../../components/ui/button";
-
 import { Label } from "../../../components/ui/label";
-
 import { Checkbox } from "../../../components/ui/checkbox";
-
 import { CreditCard } from "lucide-react";
-
 import { toast } from "sonner";
 
 import { validatePaymentField } from "../validation/paymentValidation";
-
-import { FormField } from "../components/form/PaymentForm";
-
+import { FormField } from "../components/form/PaymentForm"; // Make sure this component accepts standard classNames now
 import { useCheckout } from "../../../contexts/CheckoutContext";
-
 import { confirmPayment } from "../../../api/paymentApi";
+
+import "./components_css/PaymentForm.css"; // <-- Import the new CSS file
+
+// 1. Defined TypeScript interfaces to replace `any`
+interface PaymentFormData {
+  cardNumber?: string;
+  expiryDate?: string;
+  cvv?: string;
+  cardName?: string;
+  saveInfo?: boolean;
+  [key: string]: any;
+}
+
+interface PaymentFormProps {
+  formData: PaymentFormData;
+  handleInputChange: (field: string, value: string | boolean) => void;
+  nextStep: () => void;
+  setStep: (step: number) => void;
+}
 
 export function PaymentForm({
   formData,
   handleInputChange,
   nextStep,
   setStep,
-}: any) {
+}: PaymentFormProps) {
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(false);
 
-  const [errors, setErrors] =
-    useState<any>({});
+  const { checkoutData, setCheckoutField } = useCheckout();
 
-  const [touched, setTouched] =
-    useState<any>({});
+  // 2. Memoized required fields
+  const requiredFields = useMemo(
+    () => ["cardNumber", "expiryDate", "cvv", "cardName"],
+    []
+  );
 
-  const [loading, setLoading] =
-    useState(false);
+  // 3. Wrapped functions in useCallback
+  const handleChange = useCallback(
+    (field: string, rawValue: string) => {
+      let value = rawValue;
 
-  const {
-    checkoutData,
-    setCheckoutField,
-  } = useCheckout();
-
-  const requiredFields = [
-    "cardNumber",
-    "expiryDate",
-    "cvv",
-    "cardName",
-  ];
-
-  const handleChange = (
-    field: string,
-    value: string
-  ) => {
-
-    // 🔥 CARD NUMBER
-    if (field === "cardNumber") {
-
-      value = value
-        .replace(/\D/g, "")
-        .slice(0, 16);
-
-      value = value
-        .replace(/(.{4})/g, "$1 ")
-        .trim();
-    }
-
-    // 🔥 CVV
-    if (field === "cvv") {
-
-      value = value
-        .replace(/\D/g, "")
-        .slice(0, 4);
-    }
-
-    // 🔥 EXPIRY
-    if (field === "expiryDate") {
-
-      value = value
-        .replace(/[^\d]/g, "")
-        .slice(0, 4);
-
-      if (value.length >= 3) {
-
-        value =
-          value.slice(0, 2) +
-          "/" +
-          value.slice(2);
+      switch (field) {
+        case "cardNumber":
+          value = value.replace(/\D/g, "").slice(0, 16);
+          value = value.replace(/(.{4})/g, "$1 ").trim();
+          break;
+        case "cvv":
+          value = value.replace(/\D/g, "").slice(0, 4);
+          break;
+        case "expiryDate":
+          value = value.replace(/[^\d]/g, "").slice(0, 4);
+          if (value.length >= 3) {
+            value = value.slice(0, 2) + "/" + value.slice(2);
+          }
+          break;
+        case "cardName":
+          value = value.replace(/[^A-Za-z\s]/g, "").slice(0, 50);
+          break;
       }
-    }
 
-    // 🔥 CARD HOLDER
-    if (field === "cardName") {
+      handleInputChange(field, value);
 
-      value = value
-        .replace(/[^A-Za-z\s]/g, "")
-        .slice(0, 50);
-    }
+      // 🔥 live validation
+      if (touched[field]) {
+        const valid = validatePaymentField(field, value);
+        setErrors((prev) => ({
+          ...prev,
+          [field]: !valid,
+        }));
+      }
+    },
+    [handleInputChange, touched]
+  );
 
-    handleInputChange(
-      field,
-      value
-    );
+  const handleBlur = useCallback(
+    (field: string) => {
+      setTouched((prev) => ({ ...prev, [field]: true }));
+      const valid = validatePaymentField(field, formData[field] as string || "");
+      setErrors((prev) => ({ ...prev, [field]: !valid }));
+    },
+    [formData]
+  );
 
-    // 🔥 live validation
-    if (touched[field]) {
+  const fieldError = useCallback(
+    (field: string) => touched[field] && errors[field],
+    [touched, errors]
+  );
 
-      const valid =
-        validatePaymentField(
-          field,
-          value
-        );
+  const fieldValid = useCallback(
+    (field: string) => touched[field] && !errors[field] && !!formData[field],
+    [touched, errors, formData]
+  );
 
-      setErrors((prev: any) => ({
-        ...prev,
-        [field]: !valid,
-      }));
-    }
-  };
+  // 4. Returns standard CSS classes instead of Tailwind utilities
+  const inputStyle = useCallback(
+    (field: string) => {
+      if (fieldError(field)) {
+        return "form-input error";
+      }
+      return "form-input valid";
+    },
+    [fieldError]
+  );
 
-  const handleBlur = (
-    field: string
-  ) => {
-
-    setTouched((prev: any) => ({
-      ...prev,
-      [field]: true,
-    }));
-
-    const valid =
-      validatePaymentField(
-        field,
-        formData[field] || ""
-      );
-
-    setErrors((prev: any) => ({
-      ...prev,
-      [field]: !valid,
-    }));
-  };
-
-  const fieldError = (
-    field: string
-  ) =>
-    touched[field] &&
-    errors[field];
-
-  const fieldValid = (
-    field: string
-  ) =>
-    touched[field] &&
-    !errors[field] &&
-    formData[field];
-
-  const inputStyle = (
-    field: string
-  ) => {
-
-    if (fieldError(field)) {
-
-      return "border-red-500 focus-visible:ring-red-500";
-    }
-
-    return "focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500";
-  };
-
-  const disableContinue =
-    requiredFields.some(
-      (field) =>
-        !formData[field] ||
-        errors[field]
-    );
+  const disableContinue = useMemo(() => {
+    return requiredFields.some((field) => !formData[field] || errors[field]);
+  }, [requiredFields, formData, errors]);
 
   const handleContinue = async () => {
-
     try {
-
       setLoading(true);
 
       // 🔥 save payment method
-      setCheckoutField(
-        "paymentMethodId",
-        1
-      );
+      setCheckoutField("paymentMethodId", 1);
 
-      const [month, year] =
-        formData.expiryDate.split("/");
+      const [month, year] = (formData.expiryDate as string).split("/");
 
       const payload = {
-
         paymentMethodId: 1,
-
-        savePayment:
-          formData.saveInfo,
-
-        cardNumber:
-          formData.cardNumber.replace(/\s/g, ""),
-
-        expiryMonth:
-          Number(month),
-
-        expiryYear:
-          Number(`20${year}`),
-
-        cvv:
-          formData.cvv,
+        savePayment: formData.saveInfo,
+        cardNumber: (formData.cardNumber as string).replace(/\s/g, ""),
+        expiryMonth: Number(month),
+        expiryYear: Number(`20${year}`),
+        cvv: formData.cvv,
       };
 
-      console.log(
-        "CONFIRM PAYMENT:",
-        payload
-      );
+      console.log("CONFIRM PAYMENT:", payload);
 
       // 🔥 confirm payment
-      await confirmPayment(
-        checkoutData.orderId,
-        payload
-      );
+      await confirmPayment(checkoutData.orderId, payload);
 
-      toast.success(
-        "Payment confirmed successfully"
-      );
-
+      toast.success("Payment confirmed successfully");
       nextStep();
-
     } catch (err) {
-
       console.error(err);
-
-      toast.error(
-        "Failed to confirm payment"
-      );
-
+      toast.error("Failed to confirm payment");
     } finally {
-
       setLoading(false);
     }
   };
 
   return (
-
-    <Card className="border-0 shadow-md">
-
-      <CardHeader>
-
-        <CardTitle className="flex items-center">
-          <CreditCard
-            className="mr-2"
-            size={20}
-          />
-
+    <Card className="payment-card">
+      <CardHeader className="payment-card-header">
+        <CardTitle className="payment-card-title">
+          <CreditCard className="icon-accent" size={20} />
           Payment Information
         </CardTitle>
-
       </CardHeader>
 
-      <CardContent className="space-y-4">
-
+      <CardContent className="payment-card-content">
         {/* CARD NUMBER */}
         <FormField
           label="Card Number"
@@ -276,8 +183,7 @@ export function PaymentForm({
         />
 
         {/* EXPIRY + CVV */}
-        <div className="grid grid-cols-2 gap-4">
-
+        <div className="grid-layout cols-2">
           <FormField
             label="Expiry Date"
             name="expiryDate"
@@ -303,7 +209,6 @@ export function PaymentForm({
             fieldError={fieldError}
             fieldValid={fieldValid}
           />
-
         </div>
 
         {/* CARD NAME */}
@@ -321,54 +226,38 @@ export function PaymentForm({
         />
 
         {/* SAVE CARD */}
-        <div className="flex items-center space-x-2">
-
+        <div className="checkbox-group">
           <Checkbox
             id="saveInfo"
             checked={formData.saveInfo}
             onCheckedChange={(checked) =>
-              handleInputChange(
-                "saveInfo",
-                checked as boolean
-              )
+              handleInputChange("saveInfo", checked as boolean)
             }
           />
-
-          <Label htmlFor="saveInfo">
-            Save payment information
-            for future orders
+          <Label htmlFor="saveInfo" className="checkbox-label">
+            Save payment information for future orders
           </Label>
-
         </div>
 
         {/* ACTIONS */}
-        <div className="flex space-x-4">
-
+        <div className="action-buttons">
           <Button
             variant="outline"
             onClick={() => setStep(3)}
-            className="flex-1"
+            className="btn outline-btn"
           >
             Back
           </Button>
 
           <Button
-            disabled={
-              disableContinue ||
-              loading
-            }
+            disabled={disableContinue || loading}
             onClick={handleContinue}
-            className="flex-1 bg-green-600 hover:bg-green-700"
+            className="btn submit-btn"
           >
-            {loading
-              ? "Processing..."
-              : "Review Order"}
+            {loading ? "Processing..." : "Review Order"}
           </Button>
-
         </div>
-
       </CardContent>
-
     </Card>
   );
 }
