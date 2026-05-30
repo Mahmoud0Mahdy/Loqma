@@ -1,23 +1,31 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { formatDistanceToNow } from 'date-fns';
-import { ArrowDown, ArrowLeft, ArrowUp, Bookmark, MessageCircle, Trash2 } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
-import { Badge } from '../components/ui/badge';
-import { Button } from '../components/ui/button';
-import { Card } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  Bookmark,
+  MessageCircle,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner@2.0.3";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Card } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import {
   createComment,
   deleteComment,
+  deletePost,
   getPostById,
   getPostComments,
   savePost,
   votePost,
-} from '../api/communityApi';
-import { Post } from '../components/PostCard';
-import { useApp } from '../contexts/AppContext';
+} from "../api/communityApi";
+import { Post } from "../components/PostCard";
+import { useApp } from "../contexts/AppContext";
 
 interface CommentItem {
   id: string;
@@ -35,7 +43,7 @@ export function PostDetailsPage() {
   const { state } = useApp();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<CommentItem[]>([]);
-  const [commentInput, setCommentInput] = useState('');
+  const [commentInput, setCommentInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [submittingComment, setSubmittingComment] = useState(false);
 
@@ -45,33 +53,38 @@ export function PostDetailsPage() {
       apiPost.authorName ??
       apiPost.author?.name ??
       apiPost.user?.name ??
-      'Anonymous';
+      "Anonymous";
 
     return {
       id: String(apiPost.id),
+      userId: apiPost.userId,
       author: {
         name: authorName,
         avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(authorName)}`,
       },
-      title: apiPost.title ?? '',
-      content: apiPost.content ?? '',
-      imageUrl: apiPost.imageUrl ?? '',
+      title: apiPost.title ?? "",
+      content: apiPost.content ?? "",
+      imageUrl: apiPost.imageUrl ?? "",
       tags: apiPost.tags?.map((tag: any) => tag.name ?? tag) ?? [],
       upvotes: apiPost.votes ?? apiPost.upvotes ?? apiPost.voteCount ?? 0,
       comments: apiPost.commentsCount ?? apiPost.comments ?? 0,
       timestamp: apiPost.createdAt
         ? formatDistanceToNow(new Date(apiPost.createdAt), { addSuffix: true })
-        : 'Just now',
+        : "Just now",
       isSaved: apiPost.isSaved ?? false,
       currentUserVote: apiPost.currentUserVote ?? 0,
     };
   };
 
   const mapApiComment = (comment: any): CommentItem => {
-    const userName = comment.userName ?? comment.authorName ?? comment.author?.name ?? 'Anonymous';
+    const userName =
+      comment.userName ??
+      comment.authorName ??
+      comment.author?.name ??
+      "Anonymous";
     return {
       id: String(comment.id),
-      content: comment.content ?? '',
+      content: comment.content ?? "",
       userName,
       userAvatar:
         comment.userAvatar ??
@@ -79,7 +92,7 @@ export function PostDetailsPage() {
         `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userName)}`,
       createdAt: comment.createdAt
         ? formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })
-        : 'Just now',
+        : "Just now",
       userId: comment.userId ? String(comment.userId) : undefined,
       isOwnedByCurrentUser: comment.isOwnedByCurrentUser,
     };
@@ -97,12 +110,12 @@ export function PostDetailsPage() {
       const normalizedPost = postData?.data ?? postData;
       const normalizedComments = Array.isArray(commentsData)
         ? commentsData
-        : commentsData?.data ?? [];
+        : (commentsData?.data ?? []);
 
       setPost(mapApiPostToPostCard(normalizedPost));
       setComments(normalizedComments.map(mapApiComment));
     } catch (error) {
-      toast.error('Failed to load post details');
+      toast.error("Failed to load post details");
     } finally {
       setLoading(false);
     }
@@ -128,7 +141,7 @@ export function PostDetailsPage() {
         };
       });
     } catch (error) {
-      toast.error('Failed to submit vote');
+      toast.error("Failed to submit vote");
     }
   };
 
@@ -137,37 +150,55 @@ export function PostDetailsPage() {
     try {
       await savePost(post.id);
       setPost((prevPost) =>
-        prevPost ? { ...prevPost, isSaved: !prevPost.isSaved } : prevPost
+        prevPost ? { ...prevPost, isSaved: !prevPost.isSaved } : prevPost,
       );
     } catch (error) {
-      toast.error('Failed to update saved post');
+      toast.error("Failed to update saved post");
     }
   };
 
   const handleCreateComment = async () => {
     if (!id) return;
     if (!commentInput.trim()) {
-      toast.error('Please enter a comment');
+      toast.error("Please enter a comment");
       return;
     }
 
     setSubmittingComment(true);
     try {
       await createComment(id, commentInput.trim());
-      setCommentInput('');
+      setCommentInput("");
       const commentsData = await getPostComments(id);
       const normalizedComments = Array.isArray(commentsData)
         ? commentsData
-        : commentsData?.data ?? [];
+        : (commentsData?.data ?? []);
       setComments(normalizedComments.map(mapApiComment));
       setPost((prevPost) =>
-        prevPost ? { ...prevPost, comments: prevPost.comments + 1 } : prevPost
+        prevPost ? { ...prevPost, comments: prevPost.comments + 1 } : prevPost,
       );
-      toast.success('Comment posted');
+      toast.success("Comment posted");
     } catch (error) {
-      toast.error('Failed to post comment');
+      toast.error("Failed to post comment");
     } finally {
       setSubmittingComment(false);
+    }
+  };
+
+  const canDeletePost = () => {
+    if (!post) return false;
+    if (!state.user) return false;
+    return Number(post.userId) === Number(state.user.id);
+  };
+
+  const handleDeletePost = async () => {
+    if (!post) return;
+
+    try {
+      await deletePost(post.id);
+      toast.success("Post deleted successfully");
+      navigate("/community");
+    } catch (error) {
+      toast.error("Failed to delete post");
     }
   };
 
@@ -186,11 +217,11 @@ export function PostDetailsPage() {
       setPost((prevPost) =>
         prevPost
           ? { ...prevPost, comments: Math.max(prevPost.comments - 1, 0) }
-          : prevPost
+          : prevPost,
       );
-      toast.success('Comment deleted');
+      toast.success("Comment deleted");
     } catch (error) {
-      toast.error('Failed to delete comment');
+      toast.error("Failed to delete comment");
     }
   };
 
@@ -231,23 +262,40 @@ export function PostDetailsPage() {
         </button>
 
         <Card className="p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={post.author.avatar} alt={post.author.name} />
-              <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-gray-900">{post.author.name}</p>
-              <p className="text-sm text-gray-500">{post.timestamp}</p>
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={post.author.avatar} alt={post.author.name} />
+                <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-gray-900">{post.author.name}</p>
+                <p className="text-sm text-gray-500">{post.timestamp}</p>
+              </div>
             </div>
+
+            {canDeletePost() && (
+              <button
+                onClick={handleDeletePost}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50 p-1 rounded-md transition-colors"
+              >
+                <Trash2 size={18} />
+              </button>
+            )}
           </div>
 
           <h1 className="text-gray-900 mb-3">{post.title}</h1>
-          <p className="text-gray-700 mb-4 whitespace-pre-wrap">{post.content}</p>
+          <p className="text-gray-700 mb-4 whitespace-pre-wrap">
+            {post.content}
+          </p>
 
           {post.imageUrl && (
             <div className="mb-4 rounded-lg overflow-hidden">
-              <img src={post.imageUrl} alt={post.title} className="w-full max-h-[420px] object-cover" />
+              <img
+                src={post.imageUrl}
+                alt={post.title}
+                className="w-full max-h-[420px] object-cover"
+              />
             </div>
           )}
 
@@ -264,18 +312,24 @@ export function PostDetailsPage() {
               <button
                 onClick={() => handleVote(1)}
                 className={`p-1 rounded hover:bg-gray-100 transition-colors ${
-                  post.currentUserVote === 1 ? 'text-orange-500' : 'text-gray-400'
+                  post.currentUserVote === 1
+                    ? "text-orange-500"
+                    : "text-gray-400"
                 }`}
               >
                 <ArrowUp size={18} />
               </button>
-              <span className={`text-sm ${post.upvotes > 0 ? 'text-orange-600' : 'text-gray-600'}`}>
+              <span
+                className={`text-sm ${post.upvotes > 0 ? "text-orange-600" : "text-gray-600"}`}
+              >
                 {post.upvotes}
               </span>
               <button
                 onClick={() => handleVote(-1)}
                 className={`p-1 rounded hover:bg-gray-100 transition-colors ${
-                  post.currentUserVote === -1 ? 'text-blue-500' : 'text-gray-400'
+                  post.currentUserVote === -1
+                    ? "text-blue-500"
+                    : "text-gray-400"
                 }`}
               >
                 <ArrowDown size={18} />
@@ -290,11 +344,16 @@ export function PostDetailsPage() {
             <button
               onClick={handleSave}
               className={`flex items-center gap-1 transition-colors ${
-                post.isSaved ? 'text-orange-500' : 'text-gray-600 hover:text-orange-500'
+                post.isSaved
+                  ? "text-orange-500"
+                  : "text-gray-600 hover:text-orange-500"
               }`}
             >
-              <Bookmark size={16} fill={post.isSaved ? 'currentColor' : 'none'} />
-              <span className="text-sm">{post.isSaved ? 'Saved' : 'Save'}</span>
+              <Bookmark
+                size={16}
+                fill={post.isSaved ? "currentColor" : "none"}
+              />
+              <span className="text-sm">{post.isSaved ? "Saved" : "Save"}</span>
             </button>
           </div>
         </Card>
@@ -310,31 +369,42 @@ export function PostDetailsPage() {
               className="flex-1"
             />
             <Button onClick={handleCreateComment} disabled={submittingComment}>
-              {submittingComment ? 'Posting...' : 'Post Comment'}
+              {submittingComment ? "Posting..." : "Post Comment"}
             </Button>
           </div>
 
           <div className="space-y-4">
             {comments.length > 0 ? (
               comments.map((comment) => (
-                <div key={comment.id} className="border border-gray-100 rounded-lg p-4">
+                <div
+                  key={comment.id}
+                  className="border border-gray-100 rounded-lg p-4"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={comment.userAvatar} alt={comment.userName} />
-                        <AvatarFallback>{comment.userName.charAt(0)}</AvatarFallback>
+                        <AvatarImage
+                          src={comment.userAvatar}
+                          alt={comment.userName}
+                        />
+                        <AvatarFallback>
+                          {comment.userName.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm text-gray-900">{comment.userName}</p>
-                        <p className="text-xs text-gray-500">{comment.createdAt}</p>
+                        <p className="text-sm text-gray-900">
+                          {comment.userName}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {comment.createdAt}
+                        </p>
                       </div>
                     </div>
 
                     {canDeleteComment(comment) && (
                       <button
                         onClick={() => handleDeleteComment(comment.id)}
-                        className="text-gray-400 hover:text-red-500 transition-colors"
-                        title="Delete comment"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50 p-1 rounded-md transition-colors"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -345,7 +415,9 @@ export function PostDetailsPage() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-sm">No comments yet. Be the first to comment.</p>
+              <p className="text-gray-500 text-sm">
+                No comments yet. Be the first to comment.
+              </p>
             )}
           </div>
         </Card>

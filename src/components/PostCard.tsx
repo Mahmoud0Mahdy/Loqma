@@ -1,13 +1,17 @@
-import { ArrowUp, ArrowDown, MessageCircle, Bookmark } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Badge } from './ui/badge';
+import { ArrowUp, ArrowDown, MessageCircle, Bookmark } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Badge } from "./ui/badge";
 
 export interface Post {
   id: string;
+
+  userId: number;
+
   author: {
     name: string;
     avatar: string;
   };
+
   title: string;
   content: string;
   imageUrl?: string;
@@ -27,13 +31,19 @@ interface PostCardProps {
   onCommentsClick?: (postId: string) => void;
 }
 
-export function PostCard({ post, onPostClick, onVote, onSave, onCommentsClick }: PostCardProps) {
+export function PostCard({
+  post,
+  onPostClick,
+  onVote,
+  onSave,
+  onCommentsClick,
+}: PostCardProps) {
   const tagColors: { [key: string]: string } = {
-    'Recipes': 'bg-green-100 text-green-700 hover:bg-green-200',
-    'Tips': 'bg-blue-100 text-blue-700 hover:bg-blue-200',
-    'Questions': 'bg-purple-100 text-purple-700 hover:bg-purple-200',
-    'Products': 'bg-orange-100 text-orange-700 hover:bg-orange-200',
-    'Budget Meals': 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200',
+    Recipes: "bg-green-100 text-green-700 hover:bg-green-200",
+    Tips: "bg-blue-100 text-blue-700 hover:bg-blue-200",
+    Questions: "bg-purple-100 text-purple-700 hover:bg-purple-200",
+    Products: "bg-orange-100 text-orange-700 hover:bg-orange-200",
+    "Budget Meals": "bg-yellow-100 text-yellow-700 hover:bg-yellow-200",
   };
 
   return (
@@ -44,20 +54,26 @@ export function PostCard({ post, onPostClick, onVote, onSave, onCommentsClick }:
           <button
             onClick={() => onVote?.(post.id, 1)}
             className={`p-1 rounded hover:bg-gray-200 transition-colors ${
-              post.currentUserVote === 1 ? 'text-orange-500' : 'text-gray-400'
+              post.currentUserVote === 1 ? "text-orange-500" : "text-gray-400"
             }`}
           >
             <ArrowUp size={20} />
           </button>
-          <span className={`text-sm ${
-            post.upvotes > 0 ? 'text-orange-600' : post.upvotes < 0 ? 'text-gray-400' : 'text-gray-600'
-          }`}>
+          <span
+            className={`text-sm ${
+              post.upvotes > 0
+                ? "text-orange-600"
+                : post.upvotes < 0
+                  ? "text-gray-400"
+                  : "text-gray-600"
+            }`}
+          >
             {post.upvotes}
           </span>
           <button
             onClick={() => onVote?.(post.id, -1)}
             className={`p-1 rounded hover:bg-gray-200 transition-colors ${
-              post.currentUserVote === -1 ? 'text-blue-500' : 'text-gray-400'
+              post.currentUserVote === -1 ? "text-blue-500" : "text-gray-400"
             }`}
           >
             <ArrowDown size={20} />
@@ -79,7 +95,7 @@ export function PostCard({ post, onPostClick, onVote, onSave, onCommentsClick }:
           </div>
 
           {/* Post title */}
-          <h3 
+          <h3
             className="mb-2 text-gray-900 cursor-pointer hover:text-green-600 transition-colors"
             onClick={() => onPostClick?.(post.id)}
           >
@@ -87,15 +103,13 @@ export function PostCard({ post, onPostClick, onVote, onSave, onCommentsClick }:
           </h3>
 
           {/* Post content */}
-          <p className="text-gray-600 mb-3 line-clamp-2">
-            {post.content}
-          </p>
+          <p className="text-gray-600 mb-3 line-clamp-2">{post.content}</p>
 
           {/* Post image */}
           {post.imageUrl && (
             <div className="mb-3 rounded-lg overflow-hidden">
-              <img 
-                src={post.imageUrl} 
+              <img
+                src={post.imageUrl}
                 alt={post.title}
                 className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity"
                 onClick={() => onPostClick?.(post.id)}
@@ -109,7 +123,7 @@ export function PostCard({ post, onPostClick, onVote, onSave, onCommentsClick }:
               <Badge
                 key={tag}
                 variant="secondary"
-                className={`${tagColors[tag] || 'bg-gray-100 text-gray-700'} rounded-full`}
+                className={`${tagColors[tag] || "bg-gray-100 text-gray-700"} rounded-full`}
               >
                 {tag}
               </Badge>
@@ -128,11 +142,16 @@ export function PostCard({ post, onPostClick, onVote, onSave, onCommentsClick }:
             <button
               onClick={() => onSave?.(post.id)}
               className={`flex items-center gap-1 transition-colors ${
-                post.isSaved ? 'text-orange-500' : 'text-gray-600 hover:text-orange-500'
+                post.isSaved
+                  ? "text-orange-500"
+                  : "text-gray-600 hover:text-orange-500"
               }`}
             >
-              <Bookmark size={18} fill={post.isSaved ? 'currentColor' : 'none'} />
-              <span className="text-sm">{post.isSaved ? 'Saved' : 'Save'}</span>
+              <Bookmark
+                size={18}
+                fill={post.isSaved ? "currentColor" : "none"}
+              />
+              <span className="text-sm">{post.isSaved ? "Saved" : "Save"}</span>
             </button>
           </div>
         </div>

@@ -36,6 +36,7 @@ export function CommunityPage() {
 
     return {
       id: String(post.id),
+      userId: post.userId,
       author: {
         name: authorName,
         avatar: authorAvatar,
