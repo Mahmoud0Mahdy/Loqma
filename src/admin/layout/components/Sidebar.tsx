@@ -14,10 +14,10 @@ import {
 
 const navItems = [
   { to: "/admin", end: true, label: "Dashboard", icon: LayoutDashboard },
-  { to: "/admin/orders", label: "Orders", icon: ShoppingCart }, // ✅ New Orders Link
+  { to: "/admin/categories", label: "Categories", icon: Layers },
   { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/recipes", label: "Recipes", icon: UtensilsCrossed },
-  { to: "/admin/categories", label: "Categories", icon: Layers },
+  { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/posts", label: "Posts", icon: MessageSquare },
 ];
