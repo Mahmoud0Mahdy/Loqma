@@ -83,9 +83,31 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
             {category}
           </Badge>
 
+<<<<<<< Updated upstream
           <Badge className={`text-xs font-bold border-none ${diffBg}`}>
             {diffLabel}
           </Badge>
+=======
+          <Badge
+  variant={
+    difficulty === "Easy"
+      ? "default"
+      : difficulty === "Intermediate"
+        ? "destructive"
+        : difficulty === "Medium"
+          ? "secondary"
+          : difficulty === "Advanced"
+            ? "destructive"
+            : difficulty === "Hard"
+              ? "destructive"
+              : difficulty === "Expert"
+                ? "destructive"
+                : "secondary"
+  }
+>
+  {difficulty}
+</Badge>
+>>>>>>> Stashed changes
         </div>
 
         <div className="flex gap-2">

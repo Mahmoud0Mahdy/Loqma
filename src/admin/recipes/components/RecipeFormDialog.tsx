@@ -29,6 +29,7 @@ interface RecipeFormDialogProps {
   isOpen: boolean;
   onClose: () => void;
   editingRecipe: Recipe | null;
+  onSuccess: () => Promise<void>;
 }
 
 const defaultFormData = {
@@ -37,17 +38,31 @@ const defaultFormData = {
   time: "",
   servings: "",
   category: "",
-  difficulty: "Easy" as "Easy" | "Medium" | "Hard",
+  difficulty: "Easy" as
+    | "Easy"
+    | "Intermediate"
+    | "Medium"
+    | "Advanced"
+    | "Hard"
+    | "Expert",
   ingredients: "",
   instructions: "",
 };
 
-const difficulties: ("Easy" | "Medium" | "Hard")[] = ["Easy", "Medium", "Hard"];
+const difficulties = [
+  "Easy",
+  "Intermediate",
+  "Medium",
+  "Advanced",
+  "Hard",
+  "Expert",
+] as const;
 
 export function RecipeFormDialog({
   isOpen,
   onClose,
   editingRecipe,
+  onSuccess,
 }: RecipeFormDialogProps) {
   const { addRecipe, editRecipe } = useApp();
 
@@ -82,8 +97,7 @@ export function RecipeFormDialog({
         const data = await getRecipeById(editingRecipe.id); // 🔥 هنا الحل
 
         const matchedCategory = categories.find(
-          (c) =>
-            c.name.toLowerCase() === data.categoryName?.toLowerCase()
+          (c) => c.name.toLowerCase() === data.categoryName?.toLowerCase(),
         );
 
         setFormData({
@@ -94,7 +108,9 @@ export function RecipeFormDialog({
           category: matchedCategory ? matchedCategory.id.toString() : "",
           difficulty: data.difficultyLevel || "Easy",
           ingredients:
-            data.ingredients?.map((i: any) => i.quantityDescription).join("\n") || "",
+            data.ingredients
+              ?.map((i: any) => i.quantityDescription)
+              .join("\n") || "",
           instructions:
             data.instructions?.map((i: any) => i.step).join("\n") || "",
         });
@@ -152,6 +168,8 @@ export function RecipeFormDialog({
         await addRecipe(apiRecipeData);
         toast.success("Recipe added successfully");
       }
+
+      await onSuccess();
 
       onClose();
     } catch (error: any) {

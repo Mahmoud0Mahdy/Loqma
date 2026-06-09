@@ -57,9 +57,7 @@ export function SavedRecipesPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="border-0 shadow-lg">
           <CardHeader>
-            <CardTitle>
-              Saved Recipes ({savedRecipes.length})
-            </CardTitle>
+            <CardTitle>Saved Recipes ({savedRecipes.length})</CardTitle>
           </CardHeader>
 
           <CardContent>
@@ -93,9 +91,7 @@ export function SavedRecipesPage() {
                             variant="ghost"
                             size="sm"
                             className="bg-white/90 hover:bg-white p-1 h-8 w-8"
-                            onClick={(e) =>
-                              toggleFavorite(recipe.recipeId, e)
-                            }
+                            onClick={(e) => toggleFavorite(recipe.recipeId, e)}
                           >
                             <Heart
                               size={16}
@@ -125,7 +121,7 @@ export function SavedRecipesPage() {
 
                           <div className="flex items-center">
                             <Users size={16} className="mr-1" />
-                            <span>N/A</span>
+                            <span>{recipe.servings || "N/A"}</span>
                           </div>
 
                           <div className="flex items-center">

@@ -2,13 +2,13 @@ import axiosInstance from "./axiosInstance";
 
 // ================= USERS =================
 
-// 🔥 GET ALL USERS (Admin)
+// GET ALL USERS (Admin)
 export const getAllUsers = async () => {
   const res = await axiosInstance.get("/Users");
   return res.data;
 };
 
-// 🔥 TOGGLE USER STATUS (Admin)
+// TOGGLE USER STATUS (Admin)
 export const updateUserStatus = async (id, isActive) => {
   const res = await axiosInstance.put(`/Users/${id}/status`, {
     isActive,
@@ -18,13 +18,12 @@ export const updateUserStatus = async (id, isActive) => {
 
 // ================= CATEGORIES =================
 
-// 🔥 GET Categories by type (1 = recipe, 2 = product)
+// GET Categories by type (1 = recipe, 2 = product)
 export const getCategories = async (type) => {
   const res = await axiosInstance.get(`/Categories/${type}`);
   return res.data;
 };
 
-// 🔥 GET ALL CATEGORIES (merge الاتنين)
 export const getAllCategories = async () => {
   try {
     const [recipeRes, productRes] = await Promise.all([
@@ -50,13 +49,13 @@ export const getAllCategories = async () => {
   }
 };
 
-// 🔥 ADD CATEGORY
+// ADD CATEGORY
 export const createCategory = async (data) => {
   const res = await axiosInstance.post("/Categories", data);
   return res.data;
 };
 
-// 🔥 UPDATE CATEGORY
+// UPDATE CATEGORY
 // ================= Orders =================
 
 export enum OrderStatus {
@@ -67,22 +66,22 @@ export enum OrderStatus {
   Cancelled = 4,
 }
 
-// 🔥 GET ALL ORDERS (Admin)
+// GET ALL ORDERS (Admin)
 export const getAllOrders = async () => {
   // Changed from "/orders" to "/admin/orders"
   const res = await axiosInstance.get("/admin/orders");
   return res.data;
 };
 
-// 🔥 GET ORDER BY ID (Admin)
+// GET ORDER BY ID (Admin)
 export const getOrderById = async (id: string | number) => {
   // Changed from "/orders" to "/admin/orders"
   const res = await axiosInstance.get(`/admin/orders/${id}`);
   return res.data;
 };
 
-// 🔥 UPDATE ORDER STATUS (Admin)
-// 🔥 UPDATE ORDER STATUS (Admin)
+// UPDATE ORDER STATUS (Admin)
+// UPDATE ORDER STATUS (Admin)
 export const updateOrderStatus = async (id: string | number, status: OrderStatus) => {
   
   // This converts the number (e.g., 1) back into the string (e.g., "Confirmed")

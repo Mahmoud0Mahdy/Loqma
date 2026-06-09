@@ -1,23 +1,28 @@
 import { useState } from 'react';
-import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
-import { Send } from 'lucide-react';
+import { Loader2, SendHorizontal } from 'lucide-react';
 
 interface Props {
   onSend: (message: string) => void;
   disabled: boolean;
 }
 
-export function ChatInput({ onSend, disabled }: Props) {
+export function ChatInput({
+  onSend,
+  disabled,
+}: Props) {
   const [inputValue, setInputValue] = useState('');
 
   const handleSend = () => {
     if (!inputValue.trim() || disabled) return;
-    onSend(inputValue);
+
+    onSend(inputValue.trim());
     setInputValue('');
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -25,22 +30,70 @@ export function ChatInput({ onSend, disabled }: Props) {
   };
 
   return (
-    <div className="border-t border-gray-200 p-4">
-      <div className="flex space-x-3">
-        <Input
+    <div className="border-t border-gray-200 bg-white p-4">
+      <div
+        className="
+          mx-auto
+          flex
+          max-w-4xl
+          items-end
+          gap-3
+          rounded-3xl
+          border
+          border-gray-200
+          bg-white
+          px-4
+          py-3
+          shadow-sm
+          transition-all
+          focus-within:border-green-500
+          focus-within:shadow-md
+        "
+      >
+        <textarea
+          rows={1}
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder="Tell me what ingredients you have or what you're craving..."
-          className="flex-1"
           disabled={disabled}
+          onChange={(e) =>
+            setInputValue(e.target.value)
+          }
+          onKeyDown={handleKeyDown}
+          placeholder="Ask for recipes, ingredients, or meal ideas..."
+          className="
+            max-h-40
+            min-h-[28px]
+            flex-1
+            resize-none
+            border-none
+            bg-transparent
+            text-sm
+            outline-none
+            placeholder:text-gray-400
+          "
         />
-        <Button 
+
+        <Button
           onClick={handleSend}
           disabled={!inputValue.trim() || disabled}
-          className="bg-green-600 hover:bg-green-700"
+          size="icon"
+          className="
+            h-10
+            w-10
+            rounded-full
+            bg-green-600
+            text-white
+            hover:bg-green-700
+            disabled:bg-gray-300
+          "
         >
-          <Send size={16} />
+          {disabled ? (
+            <Loader2
+              size={18}
+              className="animate-spin"
+            />
+          ) : (
+            <SendHorizontal size={18} />
+          )}
         </Button>
       </div>
     </div>

@@ -127,11 +127,6 @@ export function RecipeCard({ recipe, onClick }: Props) {
             </div>
           </div>
 
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-            {recipe.ingredients?.slice(0, 3).join(", ") ||
-              "No ingredients available"}
-          </p>
-
           <Button
             variant="outline"
             size="sm"

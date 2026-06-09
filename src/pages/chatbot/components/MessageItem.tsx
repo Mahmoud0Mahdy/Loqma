@@ -1,32 +1,149 @@
-import { Bot, User } from 'lucide-react';
-import { Message } from '../types';
-import { RecipeSuggestion } from './RecipeSuggestion';
+import { Bot, User } from "lucide-react";
+import { Message } from "../types";
+import { RecipeSuggestion } from "./RecipeSuggestion";
 
 export function MessageItem({ message }: { message: Message }) {
-  const isUser = message.role === 'user';
+  const isUser = message.role === "user";
 
-  const containerClass = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
-  const wrapperClass = `max-w-[80%] ${isUser ? 'order-2' : 'order-1'}`;
-  const bubbleLayout = `flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
-  const avatarClass = `flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isUser ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'}`;
-  const bubbleClass = `rounded-lg p-4 ${isUser ? 'bg-green-600 text-white' : 'bg-white border border-gray-200'}`;
+  const recommendations = [
+    ...message.content.matchAll(
+      /\d+\.\s\*\*(.*?)\*\*:\s(.*?)(?=\d+\.\s\*\*|Which one|Which option|$)/gs,
+    ),
+  ].map((match) => ({
+    title: match[1].trim(),
+    description: match[2].trim(),
+  }));
+
+  const hasRecommendations = recommendations.length > 0;
 
   return (
-    <div className={containerClass}>
-      <div className={wrapperClass}>
-        <div className={bubbleLayout}>
-          
-          <div className={avatarClass}>
-            {isUser ? <User size={16} /> : <Bot size={16} />}
+    <div className={`flex mb-6 ${isUser ? "justify-end" : "justify-start"}`}>
+      <div
+        className={`
+          flex
+          gap-3
+          max-w-[90%]
+          ${isUser ? "flex-row-reverse" : ""}
+        `}
+      >
+        {/* Avatar */}
+        <div
+          className={`
+            flex
+            h-9
+            w-9
+            shrink-0
+            items-center
+            justify-center
+            rounded-full
+            ${
+              isUser
+                ? "bg-green-600 text-white"
+                : "bg-white border border-gray-200 text-gray-600"
+            }
+          `}
+        >
+          {isUser ? <User size={16} /> : <Bot size={16} />}
+        </div>
+
+        {/* Message */}
+        <div className="flex flex-col">
+          <div
+            className={`
+              rounded-2xl
+              px-4
+              py-3
+              text-sm
+              leading-7
+              shadow-sm
+              ${
+                isUser
+                  ? "bg-green-600 text-white"
+                  : "border border-gray-200 bg-white text-gray-800"
+              }
+            `}
+          >
+            {hasRecommendations ? (
+              <div className="space-y-4">
+                <div>
+                  <p className="font-semibold text-base">
+                    🍽️ Recommended Options
+                  </p>
+                </div>
+
+                {recommendations.map((item, index) => (
+                  <div
+                    key={index}
+                    className="
+                        border-l-4
+                        border-green-500
+                        pl-4
+                        py-2
+                      "
+                  >
+                    <h4
+                      className="
+                          font-semibold
+                          text-gray-900
+                          mb-1
+                        "
+                    >
+                      {item.title}
+                    </h4>
+
+                    <p
+                      className="
+                          text-sm
+                          text-gray-600
+                          leading-6
+                        "
+                    >
+                      {item.description}
+                    </p>
+                  </div>
+                ))}
+
+                <div
+                  className="
+                    pt-2
+                    border-t
+                    border-gray-200
+                  "
+                >
+                  <p className="font-medium">
+                    Which one sounds most appealing?
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="whitespace-pre-wrap">{message.content}</p>
+            )}
           </div>
 
-          <div className={bubbleClass}>
-            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-            {message.recipes?.map((recipeId) => (
-              <RecipeSuggestion key={recipeId} recipeId={recipeId} />
-            ))}
-          </div>
+          {/* Recipes */}
+          {message.recipes && message.recipes.length > 0 && (
+            <div className="mt-4">
+              <div className="mb-3">
+                <span
+                  className="
+                      text-xs
+                      font-semibold
+                      uppercase
+                      tracking-wider
+                      text-gray-400
+                    "
+                >
+                  Recommended Recipes
+                </span>
+              </div>
 
+              <div className="space-y-3">
+                {message.recipes.map((recipe) => (
+                  <RecipeSuggestion key={recipe.id} recipe={recipe} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

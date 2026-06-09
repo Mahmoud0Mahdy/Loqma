@@ -1,0 +1,38 @@
+.chatbot-page {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.chatbot-page * {
+  box-sizing: border-box;
+}
+
+.chatbot-layout {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.chatbot-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+
+  position: relative;
+  top: 20px;
+
+  padding-bottom: 40px;
+}
+
+/* Suggested Prompts */
+.chatbot-prompts-wrapper {
+  position: relative;
+  bottom: 80px;
+  z-index: 40;
+}
+
+/* Input */
+.chatbot-input-wrapper {
+  position: relative;
+  bottom: 70px;
+  z-index: 50;
+}

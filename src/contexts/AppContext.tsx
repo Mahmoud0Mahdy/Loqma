@@ -45,7 +45,13 @@ export interface Recipe {
   category: string;
   ingredients: string[];
   instructions: string[];
-  difficulty: "Easy" | "Medium" | "Hard";
+  difficulty:
+    | "Easy"
+    | "Intermediate"
+    | "Medium"
+    | "Advanced"
+    | "Hard"
+    | "Expert";
 }
 
 export interface User {
@@ -142,7 +148,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         products: state.products.map((p) =>
-          p.id === action.product.id ? action.product : p
+          p.id === action.product.id ? action.product : p,
         ),
       };
 
@@ -162,7 +168,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         recipes: state.recipes.map((r) =>
-          r.id === action.recipe.id ? action.recipe : r
+          r.id === action.recipe.id ? action.recipe : r,
         ),
       };
 
@@ -204,6 +210,8 @@ function appReducer(state: AppState, action: AppAction): AppState {
 
     case "LOGOUT":
       localStorage.clear();
+      sessionStorage.clear();
+
       return {
         ...state,
         user: null,
@@ -239,9 +247,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       dispatch({
         type: "SET_FAVORITE_RECIPES",
-        recipeIds: recipes.map((r: any) =>
-          String(r.recipeId ?? r.id)
-        ),
+        recipeIds: recipes.map((r: any) => String(r.recipeId ?? r.id)),
       });
     } catch (err) {
       console.error(err);
@@ -250,19 +256,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (state.isAuthenticated) {
-      fetchRecipes();
       fetchFavorites();
     }
   }, [state.isAuthenticated]);
 
   const addRecipe = async (data: any) => {
     await createRecipe(data);
-    await fetchRecipes();
   };
 
   const editRecipe = async (id: string, data: any) => {
     await updateRecipe(id, data);
-    await fetchRecipes();
   };
 
   const removeRecipe = async (id: string) => {

@@ -1,80 +1,149 @@
-import { MessageCircle, Minus } from 'lucide-react';
+import { MessageCircle, X, Bot } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useChatbotContext } from '../../../contexts/ChatbotContext';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
-import { SuggestedPrompts } from './SuggestedPrompts';
 import { useScrollToBottom } from '../hooks/useScrollToBottom';
 
 export function FloatingChatbot() {
-  const { isFloatingOpen, setFloatingOpen, messages, isLoading, sendMessage } = useChatbotContext();
+  const {
+    isFloatingOpen,
+    setFloatingOpen,
+    messages,
+    isLoading,
+    sendMessage,
+  } = useChatbotContext();
+
   const scrollRef = useScrollToBottom(messages);
   const location = useLocation();
 
-  // إخفاء الـ Icon في صفحة الشات الرئيسية
-  if (location.pathname === '/chatbot') return null;
-  if (location.pathname === '/login') return null;
-  if (location.pathname === '/signup') return null;
-  if (location.pathname === '/checkout') return null;
+  if (
+    location.pathname === '/chatbot' ||
+    location.pathname === '/login' ||
+    location.pathname === '/signup' ||
+    location.pathname === '/checkout'
+  ) {
+    return null;
+  }
 
   return (
-    // التثبيت تحت على اليمين مع z-index عالي جداً
-    <div className="fixed bottom-0 right-0 z-[9999] flex flex-col items-end">
-      
-      {/* صندوق الشات المفتوح */}
+    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end">
       {isFloatingOpen && (
-        <div style={{width: "400px",height: "450px" }} 
-        className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-[350px] sm:w-[380px] h-[500px] max-h-[85vh] flex flex-col mb-4 overflow-hidden transition-all duration-300 origin-bottom-right">
-          
+        <div
+          className="
+            mb-4
+            flex
+            h-[750px]
+            max-h-[88vh]
+            w-[430px]
+            max-w-[95vw]
+            flex-col
+            overflow-hidden
+            rounded-[28px]
+            border
+            border-gray-200
+            bg-white
+            shadow-[0_20px_80px_rgba(0,0,0,0.18)]
+            animate-in
+            fade-in
+            zoom-in-95
+            duration-200
+          "
+        >
           {/* Header */}
-          <div className="bg-green-600 text-white p-4 flex justify-between items-center shadow-sm shrink-0">
-            <div className="flex items-center space-x-3">
-              <div  className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center shrink-0">
-                <span className="text-xl">🤖</span>
+          <div className="border-b border-gray-100 bg-white px-5 py-4">
+            <div className="flex items-center justify-between">
+
+              <div className="flex items-center gap-3">
+                <div
+                  className="
+                    flex
+                    h-11
+                    w-11
+                    items-center
+                    justify-center
+                    rounded-2xl
+                    bg-green-600
+                    text-white
+                    shadow-sm
+                  "
+                >
+                  <Bot size={20} />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900">
+                    FreshMart AI
+                  </h3>
+
+                  <p className="text-sm text-gray-500">
+                    Recipe Assistant
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold text-sm line-clamp-1">AI Recipe Assistant</h3>
-                <p className="text-xs text-green-100">Online</p>
-              </div>
+
+              <button
+                onClick={() => setFloatingOpen(false)}
+                className="
+                  rounded-xl
+                  p-2
+                  text-gray-500
+                  transition-colors
+                  hover:bg-gray-100
+                "
+              >
+                <X size={20} />
+              </button>
             </div>
-            <button 
-              type="button"
-              title="Close chatbot"
-              onClick={() => setFloatingOpen(false)} 
-              className="hover:bg-green-700 p-1.5 rounded-lg transition-colors shrink-0"
-            >
-              <Minus size={20} />
-            </button>
           </div>
 
-          {/* منطقة الرسايل (هنا ضفنا السكرول) */}
-          <div className="flex-1 overflow-y-auto bg-gray-50 flex flex-col relative custom-scrollbar">
-            <MessageList 
-              messages={messages} 
-              isLoading={isLoading} 
-              scrollRef={scrollRef} 
+          {/* Messages */}
+          <div
+            ref={scrollRef}
+            className="
+              flex-1
+              overflow-y-auto
+              bg-[#fafafa]
+            "
+          >
+            <MessageList
+              messages={messages}
+              isLoading={isLoading}
+              scrollRef={scrollRef}
             />
           </div>
 
-          {/* الإدخال والاقتراحات */}
-          <div className="bg-white border-t border-gray-100 shrink-0"  >
-            {messages.length === 1 && (
-              <div style={{width: "400px",height: "125px"}} className="px-4 pb-2 pt-3 max-h-[150px] overflow-y-auto" >
-                <SuggestedPrompts onSelect={sendMessage} disabled={isLoading} />
-              </div>
-            )}
-            <ChatInput onSend={sendMessage} disabled={isLoading} />
+          {/* Input */}
+          <div className="bg-[#fafafa]">
+            <ChatInput
+              onSend={sendMessage}
+              disabled={isLoading}
+            />
           </div>
         </div>
       )}
 
-      {/* الـ Icon العائمة (أكبر شوية) */}
       {!isFloatingOpen && (
         <button
           onClick={() => setFloatingOpen(true)}
-          className="w-16 h-16 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-105 group"
+          className="
+            flex
+            h-16
+            w-16
+            items-center
+            justify-center
+            rounded-full
+            bg-green-600
+            text-white
+            shadow-[0_10px_30px_rgba(22,163,74,0.35)]
+            transition-all
+            duration-200
+            hover:scale-110
+            hover:bg-green-700
+            active:scale-95
+          "
         >
-          <MessageCircle size={32} className="group-hover:animate-pulse" />
+          <MessageCircle size={28} />
         </button>
       )}
     </div>

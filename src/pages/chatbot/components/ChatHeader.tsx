@@ -2,12 +2,37 @@ import { Bot } from 'lucide-react';
 
 export function ChatHeader() {
   return (
-    <div className="text-center mb-8">
-      <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 text-white rounded-full mb-4">
-        <Bot size={32} />
+    <header className="relative border-b border-gray-200 bg-white px-8 py-4">
+
+      {/* Center Content */}
+      <div className="flex items-center justify-center gap-4">
+        <div
+          className="
+            flex
+            h-11
+            w-11
+            items-center
+            justify-center
+            rounded-2xl
+            bg-green-600
+            text-white
+            shadow-sm
+          "
+        >
+          <Bot size={22} />
+        </div>
+
+        <div className="text-center">
+          <h1 className="text-lg font-semibold text-gray-900">
+            AI Recipe Assistant
+          </h1>
+
+          <p className="text-sm text-gray-500">
+            Powered by FreshMart AI
+          </p>
+        </div>
       </div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Recipe Assistant</h1>
-      <p className="text-gray-600">Tell me your ingredients and preferences, and I'll find the perfect recipe for you!</p>
-    </div>
+
+    </header>
   );
 }

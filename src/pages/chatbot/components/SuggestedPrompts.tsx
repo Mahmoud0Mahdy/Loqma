@@ -1,13 +1,10 @@
-import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/card';
-import { Button } from '../../../components/ui/button';
 import { Sparkles } from 'lucide-react';
 
 const PROMPTS = [
-  "I have chicken, rice, and vegetables",
-  "Quick lunch ideas under 20 minutes",
-  "Healthy breakfast recipes",
-  "Vegetarian dinner options",
-  "Easy desserts for beginners"
+  'I have chicken, rice, and vegetables',
+  'Quick lunch ideas under 20 minutes',
+  'Healthy breakfast recipes',
+  'Vegetarian dinner options',
 ];
 
 interface Props {
@@ -15,28 +12,80 @@ interface Props {
   disabled: boolean;
 }
 
-export function SuggestedPrompts({ onSelect, disabled }: Props) {
+export function SuggestedPrompts({
+  onSelect,
+  disabled,
+}: Props) {
   return (
-    <Card className="border-0 shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-lg">Need inspiration? Try these:</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {PROMPTS.map((prompt, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              onClick={() => onSelect(prompt)}
-              className="justify-start text-left h-auto p-3"
-              disabled={disabled}
+    <div className="chatbot-prompts-wrapper mx-auto max-w-4xl">
+      <div className="mb-3 flex items-center justify-center gap-2">
+        <Sparkles
+          size={14}
+          className="text-green-600"
+        />
+
+        <span className="text-xs font-medium text-gray-500">
+          Try one of these prompts
+        </span>
+      </div>
+
+      <div className="grid gap-2 md:grid-cols-2">
+        {PROMPTS.map((prompt, index) => (
+          <button
+            key={index}
+            disabled={disabled}
+            onClick={() => onSelect(prompt)}
+            className="
+              flex
+              items-center
+              gap-3
+              rounded-xl
+              border
+              border-gray-200
+              bg-white
+              px-4
+              py-3
+              text-left
+              transition-all
+              duration-200
+              hover:border-green-300
+              hover:bg-green-50
+              hover:shadow-sm
+              disabled:cursor-not-allowed
+              disabled:opacity-50
+            "
+          >
+            <div
+              className="
+                flex
+                h-7
+                w-7
+                shrink-0
+                items-center
+                justify-center
+                rounded-lg
+                bg-green-100
+              "
             >
-              <Sparkles size={16} className="mr-2 text-green-600 shrink-0" />
-              <span className="truncate">{prompt}</span>
-            </Button>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+              <Sparkles
+                size={12}
+                className="text-green-600"
+              />
+            </div>
+
+            <span
+              className="
+                truncate
+                text-xs
+                font-medium
+                text-gray-700
+              "
+            >
+              {prompt}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useApp } from "../../contexts/AppContext";
 import type { Recipe } from "../../contexts/AppContext";
@@ -20,10 +19,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-// 🔥 API
-import { getAllRecipes } from "../../api/recipeApi";
+import { getAdminRecipes } from "../../api/recipeApi";
 
-// components
 import { RecipeStats } from "./components/RecipeStats";
 import { RecipeCard } from "./components/RecipeCard";
 import { RecipeFormDialog } from "./components/RecipeFormDialog";
@@ -38,90 +35,103 @@ const categories = [
   "dessert",
   "snack",
 ];
-const ITEMS_PER_PAGE = 6;
 
 export function RecipesPage() {
-  const navigate = useNavigate();
   const { state, dispatch } = useApp();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
+
+  const [currentPage, setCurrentPage] = useState(() => {
+    const savedPage = sessionStorage.getItem("adminRecipesCurrentPage");
+    return savedPage ? Number(savedPage) : 1;
+  });
+
+  const [totalPages, setTotalPages] = useState(1);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
 
   const [loading, setLoading] = useState(false);
 
-  // ================= GET RECIPES =================
+  // ================= FETCH RECIPES =================
+  const fetchRecipes = async () => {
+    setLoading(true);
+
+    try {
+      const response = await getAdminRecipes(currentPage, 30);
+
+      setTotalPages(
+        Math.ceil(response.totalCount / response.pageSize)
+      );
+
+      const mappedRecipes: Recipe[] = response.data.map((r: any) => ({
+        id: r.id?.toString() || "",
+        title: r.title || "",
+        image: r.imageUrl || "",
+        time: `${r.prepTime || 0} min`,
+        servings: `${r.servings || 1} ${
+          (r.servings || 1) === 1 ? "person" : "people"
+        }`,
+        category: r.categoryName?.toLowerCase() || "main",
+        difficulty: r.difficultyLevel || "Easy",
+
+        ingredients:
+          r.ingredients?.map(
+            (i: any) => i.quantityDescription
+          ) || [],
+
+        instructions:
+          r.instructions?.map((i: any) => i.step) || [],
+      }));
+
+      dispatch({
+        type: "SET_RECIPES",
+        recipes: mappedRecipes,
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================= INITIAL LOAD =================
   useEffect(() => {
-    const fetchRecipes = async () => {
-      setLoading(true);
-
-      try {
-        const data = await getAllRecipes();
-
-        const mappedRecipes: Recipe[] = data.map((r: any) => ({
-          id: r.id?.toString() || "",
-          title: r.title || "",
-          image: r.imageUrl || "",
-          time: `${r.prepTime || 0} min`,
-          servings: `${r.servings || 1} ${(r.servings || 1) === 1 ? "person" : "people"}`,
-          category: r.categoryName?.toLowerCase() || "main",
-          difficulty: r.difficultyLevel || "Easy",
-          ingredients:
-            r.ingredients?.map((i: any) => i.quantityDescription) || [],
-
-          instructions: r.instructions?.map((i: any) => i.step) || [],
-        }));
-
-        dispatch({
-          type: "INIT_DATA",
-          products: state.products,
-          recipes: mappedRecipes,
-          users: state.users,
-          posts: state.communityPosts,
-        });
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRecipes();
+  }, [currentPage]);
 
-    // ❗ مهم جدًا
-  }, []);
-
-  // ================= RESET PAGE =================
   useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedCategory]);
+    sessionStorage.setItem(
+      "adminRecipesCurrentPage",
+      currentPage.toString()
+    );
+  }, [currentPage]);
 
   // ================= FILTER =================
   const filteredRecipes = state.recipes.filter((recipe) => {
     const searchLower = searchQuery.toLowerCase();
 
     const matchesSearch =
-      (recipe.title || "").toLowerCase().includes(searchLower) ||
-      (recipe.category || "").toLowerCase().includes(searchLower);
+      (recipe.title || "")
+        .toLowerCase()
+        .includes(searchLower) ||
+      (recipe.category || "")
+        .toLowerCase()
+        .includes(searchLower);
 
     const matchesCategory =
-      selectedCategory === "all" || recipe.category === selectedCategory;
+      selectedCategory === "all" ||
+      recipe.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
 
-  // ================= PAGINATION =================
-  const totalPages = Math.ceil(filteredRecipes.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentRecipes = filteredRecipes.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE,
-  );
+  const currentRecipes = filteredRecipes;
 
-  const handleOpenDialog = (recipe: Recipe | null = null) => {
+  const handleOpenDialog = (
+    recipe: Recipe | null = null
+  ) => {
     setEditingRecipe(recipe);
     setIsDialogOpen(true);
   };
@@ -134,14 +144,18 @@ export function RecipesPage() {
           <h1 className="text-3xl font-bold text-gray-800">
             Recipe Management
           </h1>
-          <p className="text-gray-600">Manage your recipe collection</p>
+
+          <p className="text-gray-600">
+            Manage your recipe collection
+          </p>
         </div>
 
         <Button
           onClick={() => handleOpenDialog()}
           className="bg-green-600 hover:bg-green-700"
         >
-          <Plus className="w-4 h-4 mr-2" /> Add Recipe
+          <Plus className="w-4 h-4 mr-2" />
+          Add Recipe
         </Button>
       </div>
 
@@ -155,7 +169,9 @@ export function RecipesPage() {
               type="text"
               placeholder="Search recipes..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) =>
+                setSearchQuery(e.target.value)
+              }
               className="pl-10"
             />
           </div>
@@ -171,8 +187,13 @@ export function RecipesPage() {
 
               <SelectContent>
                 {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat === "all" ? "All" : cat}
+                  <SelectItem
+                    key={cat}
+                    value={cat}
+                  >
+                    {cat === "all"
+                      ? "All"
+                      : cat}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -191,7 +212,7 @@ export function RecipesPage() {
         </Card>
       )}
 
-      {/* Grid */}
+      {/* Recipes */}
       {!loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentRecipes.map((recipe) => (
@@ -205,36 +226,37 @@ export function RecipesPage() {
       )}
 
       {/* Empty */}
-      {!loading && filteredRecipes.length === 0 && (
-        <Card className="p-12 text-center">
-          <UtensilsCrossed className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p>No recipes found</p>
-        </Card>
-      )}
+      {!loading &&
+        filteredRecipes.length === 0 && (
+          <Card className="p-12 text-center">
+            <UtensilsCrossed className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p>No recipes found</p>
+          </Card>
+        )}
 
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2">
           <Button
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
+            onClick={() =>
+              setCurrentPage((p) => p - 1)
+            }
           >
             <ChevronLeft />
           </Button>
 
-          {Array.from({ length: totalPages }, (_, i) => (
-            <Button
-              key={i}
-              variant={currentPage === i + 1 ? "default" : "outline"}
-              onClick={() => setCurrentPage(i + 1)}
-            >
-              {i + 1}
-            </Button>
-          ))}
+          <span className="px-4 py-2 font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
 
           <Button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
+            disabled={
+              currentPage === totalPages
+            }
+            onClick={() =>
+              setCurrentPage((p) => p + 1)
+            }
           >
             <ChevronRight />
           </Button>
@@ -245,6 +267,7 @@ export function RecipesPage() {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         editingRecipe={editingRecipe}
+        onSuccess={fetchRecipes}
       />
     </div>
   );

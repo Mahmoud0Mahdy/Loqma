@@ -1,46 +1,80 @@
-import { Card, CardContent } from '../../components/ui/card';
-import { ChatHeader } from './components/ChatHeader';
-import { MessageList } from './components/MessageList';
-import { ChatInput } from './components/ChatInput';
-import { SuggestedPrompts } from './components/SuggestedPrompts';
-import { useScrollToBottom } from './hooks/useScrollToBottom';
-// هنستورد الـ Context بدل useChat
-import { useChatbotContext } from '../../contexts/ChatbotContext';
+import "./chatbot.css";
+
+import { ChatHeader } from "./components/ChatHeader";
+import { MessageList } from "./components/MessageList";
+import { ChatInput } from "./components/ChatInput";
+import { SuggestedPrompts } from "./components/SuggestedPrompts";
+import { ChatSidebar } from "./components/ChatSidebar";
+import { useScrollToBottom } from "./hooks/useScrollToBottom";
+import { useChatbotContext } from "../../contexts/ChatbotContext";
 
 export function ChatbotPage() {
-  // سحبنا البيانات من الـ Context
-  const { messages, isLoading, sendMessage } = useChatbotContext(); 
+  const { messages, isLoading, sendMessage } = useChatbotContext();
+
   const scrollRef = useScrollToBottom(messages);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <ChatHeader />
+    <div className="chatbot-page bg-white">
+      <div className="chatbot-layout flex">
 
-        <Card className="border-0 shadow-lg mb-6 flex flex-col h-[500px]">
-          <CardContent className="p-0 h-full flex flex-col overflow-hidden">
-            <MessageList 
-              messages={messages} 
-              isLoading={isLoading} 
-              scrollRef={scrollRef} 
-            />
-            <ChatInput 
-              onSend={sendMessage} 
-              disabled={isLoading} 
-            />
-          </CardContent>
-        </Card>
+        {/* Sidebar */}
+        <ChatSidebar />
 
-        {/* إخفاء الاقتراحات لو فيه رسايل زي ما عملنا في الشات العائم (اختياري بس بيحسن الشكل) */}
-        {messages.length === 1 && (
-          <SuggestedPrompts 
-            onSelect={sendMessage} 
-            disabled={isLoading} 
-          />
-        )}
-        
+        {/* Chat Area */}
+        <main className="flex flex-1 flex-col overflow-hidden bg-[#fafafa]">
+
+          {/* Header */}
+          <ChatHeader />
+
+          {/* Messages */}
+          <div className="chatbot-messages">
+            <MessageList
+              messages={messages}
+              isLoading={isLoading}
+              scrollRef={scrollRef}
+            />
+          </div>
+
+          {/* Suggested Prompts */}
+          {messages.length <= 1 && (
+            <div
+              className="
+                shrink-0
+                bg-[#fafafa]
+                px-6
+                pt-3
+                relative
+                -top-20
+              "
+            >
+              <SuggestedPrompts
+                onSelect={sendMessage}
+                disabled={isLoading}
+              />
+            </div>
+          )}
+
+          {/* Input */}
+          <div
+            className="
+              chatbot-input-wrapper
+              shrink-0
+              bg-[#fafafa]
+              px-6
+              pt-4
+            "
+          >
+            <ChatInput
+              onSend={sendMessage}
+              disabled={isLoading}
+            />
+          </div>
+
+        </main>
+
       </div>
     </div>
   );
 }
+
+export default ChatbotPage;
