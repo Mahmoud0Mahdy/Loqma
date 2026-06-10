@@ -20,21 +20,11 @@ import {
 } from "lucide-react";
 
 import { getAdminRecipes } from "../../api/recipeApi";
+import { getCategories } from "../../api/adminApi";
 
 import { RecipeStats } from "./components/RecipeStats";
 import { RecipeCard } from "./components/RecipeCard";
 import { RecipeFormDialog } from "./components/RecipeFormDialog";
-
-const categories = [
-  "all",
-  "breakfast",
-  "lunch",
-  "dinner",
-  "main",
-  "salad",
-  "dessert",
-  "snack",
-];
 
 export function RecipesPage() {
   const { state, dispatch } = useApp();
@@ -42,15 +32,20 @@ export function RecipesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
+  const [recipeCategories, setRecipeCategories] = useState<any[]>([]);
+
   const [currentPage, setCurrentPage] = useState(() => {
-    const savedPage = sessionStorage.getItem("adminRecipesCurrentPage");
+    const savedPage = sessionStorage.getItem(
+      "adminRecipesCurrentPage"
+    );
     return savedPage ? Number(savedPage) : 1;
   });
 
   const [totalPages, setTotalPages] = useState(1);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
+  const [editingRecipe, setEditingRecipe] =
+    useState<Recipe | null>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -59,31 +54,43 @@ export function RecipesPage() {
     setLoading(true);
 
     try {
-      const response = await getAdminRecipes(currentPage, 30);
-
-      setTotalPages(
-        Math.ceil(response.totalCount / response.pageSize)
+      const response = await getAdminRecipes(
+        currentPage,
+        30
       );
 
-      const mappedRecipes: Recipe[] = response.data.map((r: any) => ({
-        id: r.id?.toString() || "",
-        title: r.title || "",
-        image: r.imageUrl || "",
-        time: `${r.prepTime || 0} min`,
-        servings: `${r.servings || 1} ${
-          (r.servings || 1) === 1 ? "person" : "people"
-        }`,
-        category: r.categoryName?.toLowerCase() || "main",
-        difficulty: r.difficultyLevel || "Easy",
+      setTotalPages(
+        Math.ceil(
+          response.totalCount / response.pageSize
+        )
+      );
 
-        ingredients:
-          r.ingredients?.map(
-            (i: any) => i.quantityDescription
-          ) || [],
+      const mappedRecipes: Recipe[] =
+        response.data.map((r: any) => ({
+          id: r.id?.toString() || "",
+          title: r.title || "",
+          image: r.imageUrl || "",
+          time: `${r.prepTime || 0} min`,
+          servings: `${r.servings || 1} ${
+            (r.servings || 1) === 1
+              ? "person"
+              : "people"
+          }`,
+          category: r.categoryName || "",
+          difficulty:
+            r.difficultyLevel || "Easy",
 
-        instructions:
-          r.instructions?.map((i: any) => i.step) || [],
-      }));
+          ingredients:
+            r.ingredients?.map(
+              (i: any) =>
+                i.quantityDescription
+            ) || [],
+
+          instructions:
+            r.instructions?.map(
+              (i: any) => i.step
+            ) || [],
+        }));
 
       dispatch({
         type: "SET_RECIPES",
@@ -96,9 +103,20 @@ export function RecipesPage() {
     }
   };
 
+  // ================= FETCH CATEGORIES =================
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories(1);
+      setRecipeCategories(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // ================= INITIAL LOAD =================
   useEffect(() => {
     fetchRecipes();
+    fetchCategories();
   }, [currentPage]);
 
   useEffect(() => {
@@ -109,23 +127,33 @@ export function RecipesPage() {
   }, [currentPage]);
 
   // ================= FILTER =================
-  const filteredRecipes = state.recipes.filter((recipe) => {
-    const searchLower = searchQuery.toLowerCase();
+  const filteredRecipes = state.recipes.filter(
+    (recipe) => {
+      const searchLower =
+        searchQuery.toLowerCase();
 
-    const matchesSearch =
-      (recipe.title || "")
-        .toLowerCase()
-        .includes(searchLower) ||
-      (recipe.category || "")
-        .toLowerCase()
-        .includes(searchLower);
+      const matchesSearch =
+        (recipe.title || "")
+          .toLowerCase()
+          .includes(searchLower) ||
+        (recipe.category || "")
+          .toLowerCase()
+          .includes(searchLower);
 
-    const matchesCategory =
-      selectedCategory === "all" ||
-      recipe.category === selectedCategory;
+      const matchesCategory =
+        selectedCategory === "all" ||
+        recipe.category
+          ?.toLowerCase()
+          .trim() ===
+          selectedCategory
+            ?.toLowerCase()
+            .trim();
 
-    return matchesSearch && matchesCategory;
-  });
+      return (
+        matchesSearch && matchesCategory
+      );
+    }
+  );
 
   const currentRecipes = filteredRecipes;
 
@@ -170,7 +198,9 @@ export function RecipesPage() {
               placeholder="Search recipes..."
               value={searchQuery}
               onChange={(e) =>
-                setSearchQuery(e.target.value)
+                setSearchQuery(
+                  e.target.value
+                )
               }
               className="pl-10"
             />
@@ -179,23 +209,29 @@ export function RecipesPage() {
           <div className="w-full md:w-64">
             <Select
               value={selectedCategory}
-              onValueChange={setSelectedCategory}
+              onValueChange={
+                setSelectedCategory
+              }
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
 
               <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem
-                    key={cat}
-                    value={cat}
-                  >
-                    {cat === "all"
-                      ? "All"
-                      : cat}
-                  </SelectItem>
-                ))}
+                <SelectItem value="all">
+                  All
+                </SelectItem>
+
+                {recipeCategories.map(
+                  (cat) => (
+                    <SelectItem
+                      key={cat.id}
+                      value={cat.name}
+                    >
+                      {cat.name}
+                    </SelectItem>
+                  )
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -215,19 +251,24 @@ export function RecipesPage() {
       {/* Recipes */}
       {!loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentRecipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              onEdit={handleOpenDialog}
-            />
-          ))}
+          {currentRecipes.map(
+            (recipe) => (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                onEdit={
+                  handleOpenDialog
+                }
+              />
+            )
+          )}
         </div>
       )}
 
       {/* Empty */}
       {!loading &&
-        filteredRecipes.length === 0 && (
+        filteredRecipes.length ===
+          0 && (
           <Card className="p-12 text-center">
             <UtensilsCrossed className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p>No recipes found</p>
@@ -238,24 +279,32 @@ export function RecipesPage() {
       {totalPages > 1 && (
         <div className="flex justify-center gap-2">
           <Button
-            disabled={currentPage === 1}
+            disabled={
+              currentPage === 1
+            }
             onClick={() =>
-              setCurrentPage((p) => p - 1)
+              setCurrentPage(
+                (p) => p - 1
+              )
             }
           >
             <ChevronLeft />
           </Button>
 
           <span className="px-4 py-2 font-medium">
-            Page {currentPage} of {totalPages}
+            Page {currentPage} of{" "}
+            {totalPages}
           </span>
 
           <Button
             disabled={
-              currentPage === totalPages
+              currentPage ===
+              totalPages
             }
             onClick={() =>
-              setCurrentPage((p) => p + 1)
+              setCurrentPage(
+                (p) => p + 1
+              )
             }
           >
             <ChevronRight />
@@ -265,8 +314,12 @@ export function RecipesPage() {
 
       <RecipeFormDialog
         isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        editingRecipe={editingRecipe}
+        onClose={() =>
+          setIsDialogOpen(false)
+        }
+        editingRecipe={
+          editingRecipe
+        }
         onSuccess={fetchRecipes}
       />
     </div>

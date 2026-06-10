@@ -8,6 +8,7 @@ import { getUserProfile } from "../../api/userProfileApi";
 import ProfileHeader from "./ProfileHeader";
 import ProfileForm from "./ProfileForm";
 import EditAccountModal from "./EditAccountModal";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 export default function ProfilePage() {
   const { state, dispatch } = useApp();
@@ -15,7 +16,10 @@ export default function ProfilePage() {
 
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
   const [openModal, setOpenModal] = useState(false);
+  const [openChangePasswordModal, setOpenChangePasswordModal] =
+    useState(false);
 
   const fetchProfile = async () => {
     try {
@@ -50,7 +54,9 @@ export default function ProfilePage() {
     return <Navigate to="/login" replace />;
   }
 
-  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (loading) {
+    return <div className="text-center mt-10">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 relative top-[20px]">
@@ -62,14 +68,23 @@ export default function ProfilePage() {
           user={profile}
           onLogout={handleLogout}
           onEdit={() => setOpenModal(true)}
+          onChangePassword={() => setOpenChangePasswordModal(true)}
         />
 
-        <ProfileForm profile={profile} setProfile={setProfile} />
+        <ProfileForm
+          profile={profile}
+          setProfile={setProfile}
+        />
 
         <EditAccountModal
           isOpen={openModal}
           onClose={() => setOpenModal(false)}
           onUpdated={fetchProfile}
+        />
+
+        <ChangePasswordModal
+          isOpen={openChangePasswordModal}
+          onClose={() => setOpenChangePasswordModal(false)}
         />
       </div>
     </div>

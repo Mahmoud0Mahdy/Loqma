@@ -19,7 +19,12 @@ import {
   SelectValue,
 } from "../../components/ui/select";
 
-import { deletePost, getAllPosts, deleteComment } from "../../api/communityApi";
+import {
+  deletePost,
+  getAdminPosts,
+  updatePostStatus,
+  deleteComment,
+} from "../../api/communityApi";
 
 import { PostStats } from "./components/PostStats";
 import { PostsTable, PostStatus } from "./components/PostsTable";
@@ -40,25 +45,14 @@ export function PostsPage() {
   const [selectedPost, setSelectedPost] = useState<any | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const parseStatus = (raw: any): PostStatus => {
-    if (typeof raw === "number") return raw as PostStatus;
-    if (typeof raw === "string") {
-      const n = parseInt(raw, 10);
-      if (!isNaN(n)) return n as PostStatus;
-    }
-    return PostStatus.Pending; // 1
-  };
-
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const data = await getAllPosts();
+      const data = await getAdminPosts();
+
       const raw = Array.isArray(data) ? data : (data?.data ?? []);
-      const normalized = raw.map((p: any) => ({
-        ...p,
-        safeStatus: parseStatus(p.status ?? p.postStatus),
-      }));
-      setPosts(normalized);
+
+      setPosts(raw);
     } catch {
       toast.error("Failed to load posts");
       setPosts([]);
@@ -67,8 +61,12 @@ export function PostsPage() {
     }
   };
 
-  useEffect(() => { fetchPosts(); }, []);
-  useEffect(() => { setCurrentPage(1); }, [searchQuery, statusFilter, sortBy]);
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, sortBy]);
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
@@ -82,22 +80,34 @@ export function PostsPage() {
     }
   };
 
-  const handleStatusChange = async (postId: number | string, newStatus: PostStatus) => {
-    // ⚠️ مفيش endpoint في الـ backend دلوقتي لتغيير status الـ post
-    // بنعمل optimistic local update بس
-    // لما الـ backend يضيف الـ endpoint، استبدل السطر ده بـ API call:
-    // await updatePostStatus(postId, newStatus);
+const handleStatusChange = async (
+  postId: number | string,
+  newStatus: PostStatus
+) => {
+  try {
+    await updatePostStatus(postId, newStatus);
+
     setPosts((prev) =>
       prev.map((p) =>
         p.id === postId
-          ? { ...p, safeStatus: newStatus, status: newStatus }
+          ? {
+              ...p,
+              status: newStatus,
+            }
           : p
       )
     );
-    toast.success("Status updated (local only — API not available yet)");
-  };
 
-  const handleDeleteComment = async (postId: number | string, commentId: number | string) => {
+    toast.success("Post status updated");
+  } catch {
+    toast.error("Failed to update status");
+  }
+};
+
+  const handleDeleteComment = async (
+    postId: number | string,
+    commentId: number | string,
+  ) => {
     await deleteComment(postId, commentId);
   };
 
@@ -116,7 +126,7 @@ export function PostsPage() {
       (p) =>
         p.id?.toString().includes(q) ||
         (p.title || "").toLowerCase().includes(q) ||
-        (p.userName || p.username || "").toLowerCase().includes(q)
+        (p.userName || p.username || "").toLowerCase().includes(q),
     );
   }
 
@@ -127,19 +137,33 @@ export function PostsPage() {
       Approved: PostStatus.Approved,
       Rejected: PostStatus.Rejected,
     };
-    processed = processed.filter((p) => p.safeStatus === statusMap[statusFilter]);
+processed = processed.filter(
+  (p) => p.status === statusMap[statusFilter]
+);
   }
 
   processed.sort((a, b) => {
     switch (sortBy) {
-      case "newest":       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      case "oldest":       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      case "votes_high":   return (b.votes ?? b.upvotes ?? 0) - (a.votes ?? a.upvotes ?? 0);
-      case "votes_low":    return (a.votes ?? a.upvotes ?? 0) - (b.votes ?? b.upvotes ?? 0);
-      case "comments_high":return (b.commentsCount ?? 0) - (a.commentsCount ?? 0);
-      case "id_desc":      return b.id - a.id;
-      case "id_asc":       return a.id - b.id;
-      default:             return 0;
+      case "newest":
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      case "oldest":
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      case "votes_high":
+        return (b.votes ?? b.upvotes ?? 0) - (a.votes ?? a.upvotes ?? 0);
+      case "votes_low":
+        return (a.votes ?? a.upvotes ?? 0) - (b.votes ?? b.upvotes ?? 0);
+      case "comments_high":
+        return (b.commentsCount ?? 0) - (a.commentsCount ?? 0);
+      case "id_desc":
+        return b.id - a.id;
+      case "id_asc":
+        return a.id - b.id;
+      default:
+        return 0;
     }
   });
 
@@ -152,7 +176,9 @@ export function PostsPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-800">Community Moderation</h1>
+        <h1 className="text-3xl font-bold text-gray-800">
+          Community Moderation
+        </h1>
         <p className="text-gray-600">Manage and moderate community posts</p>
       </div>
 
@@ -232,20 +258,32 @@ export function PostsPage() {
 
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 mt-8">
-          <Button variant="outline" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
+          <Button
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+          >
             <ChevronLeft className="w-4 h-4" />
           </Button>
           {Array.from({ length: totalPages }, (_, i) => (
             <Button
               key={i}
               variant={currentPage === i + 1 ? "default" : "outline"}
-              className={currentPage === i + 1 ? "bg-green-600 hover:bg-green-700 text-white" : ""}
+              className={
+                currentPage === i + 1
+                  ? "bg-green-600 hover:bg-green-700 text-white"
+                  : ""
+              }
               onClick={() => setCurrentPage(i + 1)}
             >
               {i + 1}
             </Button>
           ))}
-          <Button variant="outline" disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
+          <Button
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+          >
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>

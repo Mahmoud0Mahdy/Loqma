@@ -31,3 +31,20 @@ export const logoutUser = async () => {
     throw error.response?.data;
   }
 };
+
+// ================= CHANGE PASSWORD =================
+export const changePassword = async (data: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  try {
+    const response = await axiosInstance.put(
+      "/Users/change-password",
+      data
+    );
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data;
+  }
+};

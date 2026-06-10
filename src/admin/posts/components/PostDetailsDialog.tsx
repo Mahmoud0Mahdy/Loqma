@@ -8,7 +8,15 @@ import {
 } from "../../../components/ui/dialog";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { MessageCircle, Calendar, Trash2, User, ArrowUp, ArrowDown, Bookmark } from "lucide-react";
+import {
+  MessageCircle,
+  Calendar,
+  Trash2,
+  User,
+  ArrowUp,
+  ArrowDown,
+  Bookmark,
+} from "lucide-react";
 import { toast } from "sonner";
 import { getPostComments } from "../../../api/communityApi";
 import {
@@ -24,23 +32,33 @@ import {
 } from "../../../components/ui/alert-dialog";
 
 export enum PostStatus {
-  Pending = 1,
-  Approved = 2,
-  Rejected = 3,
+  Pending = "Pending",
+  Approved = "Approved",
+  Rejected = "Rejected",
 }
 
 interface PostDetailsDialogProps {
   isOpen: boolean;
   onClose: () => void;
   post: any | null;
-  onDeleteComment: (postId: number | string, commentId: number | string) => Promise<void>;
+  onDeleteComment: (
+    postId: number | string,
+    commentId: number | string,
+  ) => Promise<void>;
 }
 
-export function PostDetailsDialog({ isOpen, onClose, post, onDeleteComment }: PostDetailsDialogProps) {
+export function PostDetailsDialog({
+  isOpen,
+  onClose,
+  post,
+  onDeleteComment,
+}: PostDetailsDialogProps) {
   const [comments, setComments] = useState<any[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [avatarFailed, setAvatarFailed] = useState(false);
-  const [deletingCommentId, setDeletingCommentId] = useState<number | string | null>(null);
+  const [deletingCommentId, setDeletingCommentId] = useState<
+    number | string | null
+  >(null);
 
   useEffect(() => {
     if (isOpen && post) {
@@ -78,21 +96,25 @@ export function PostDetailsDialog({ isOpen, onClose, post, onDeleteComment }: Po
 
   if (!post) return null;
 
-  const parseStatus = (raw: any): PostStatus => {
-    if (typeof raw === "number") return raw as PostStatus;
-    if (typeof raw === "string") {
-      const n = parseInt(raw, 10);
-      if (!isNaN(n)) return n as PostStatus;
-    }
-    return PostStatus.Pending;
-  };
-
-  const safeStatus = parseStatus(post.status ?? post.postStatus ?? post.safeStatus);
+  const safeStatus = [
+    PostStatus.Pending,
+    PostStatus.Approved,
+    PostStatus.Rejected,
+  ].includes(post.status)
+    ? post.status
+    : PostStatus.Pending;
 
   const getStatusBadge = (status: PostStatus) => {
     switch (status) {
       case PostStatus.Pending:
-        return <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-200">Pending</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="bg-orange-50 text-orange-600 border-orange-200"
+          >
+            Pending
+          </Badge>
+        );
       case PostStatus.Approved:
         return <Badge className="bg-green-500">Approved</Badge>;
       case PostStatus.Rejected:
@@ -103,19 +125,22 @@ export function PostDetailsDialog({ isOpen, onClose, post, onDeleteComment }: Po
   };
 
   const postImage = post.image || post.imageUrl;
-  
+
   const voteScore = post.votes ?? post.upvotes ?? post.voteCount ?? 0;
   const savesCount = Array.isArray(post.saves)
     ? post.saves.length
     : typeof post.saves === "number"
-    ? post.saves
-    : (post.savesCount ?? post.savedCount ?? (post.isSaved ? 1 : 0));
+      ? post.saves
+      : (post.savesCount ?? post.savedCount ?? (post.isSaved ? 1 : 0));
 
   const tags = Array.isArray(post.tags)
     ? post.tags
     : typeof post.tags === "string"
-    ? post.tags.split(",").map((t: string) => t.trim()).filter(Boolean)
-    : [];
+      ? post.tags
+          .split(",")
+          .map((t: string) => t.trim())
+          .filter(Boolean)
+      : [];
 
   const avatarSrc =
     avatarFailed || !post.userAvatar
@@ -130,7 +155,9 @@ export function PostDetailsDialog({ isOpen, onClose, post, onDeleteComment }: Po
             Post #{String(post.id).padStart(5, "0")}
             {getStatusBadge(safeStatus)}
           </DialogTitle>
-          <DialogDescription className="sr-only">Full post details</DialogDescription>
+          <DialogDescription className="sr-only">
+            Full post details
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-5 mt-2">
@@ -148,19 +175,26 @@ export function PostDetailsDialog({ isOpen, onClose, post, onDeleteComment }: Po
               </p>
               <div className="flex items-center gap-1 text-xs text-gray-500">
                 <Calendar className="w-3 h-3" />
-                {post.createdAt ? new Date(post.createdAt).toLocaleString() : "—"}
+                {post.createdAt
+                  ? new Date(post.createdAt).toLocaleString()
+                  : "—"}
               </div>
             </div>
           </div>
 
           {/* Title */}
-          <h2 className="text-lg font-black text-gray-900 leading-snug">{post.title || "Untitled"}</h2>
+          <h2 className="text-lg font-black text-gray-900 leading-snug">
+            {post.title || "Untitled"}
+          </h2>
 
           {/* Tags */}
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {tags.map((tag: string) => (
-                <span key={tag} className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700 border border-green-100 font-medium">
+                <span
+                  key={tag}
+                  className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700 border border-green-100 font-medium"
+                >
                   #{tag}
                 </span>
               ))}
@@ -175,7 +209,11 @@ export function PostDetailsDialog({ isOpen, onClose, post, onDeleteComment }: Po
           {/* Post Image */}
           {postImage && (
             <div className="rounded-xl overflow-hidden border border-gray-100">
-              <img src={postImage} alt={post.title} className="w-full max-h-72 object-cover" />
+              <img
+                src={postImage}
+                alt={post.title}
+                className="w-full max-h-72 object-cover"
+              />
             </div>
           )}
 
@@ -189,7 +227,15 @@ export function PostDetailsDialog({ isOpen, onClose, post, onDeleteComment }: Po
               ) : (
                 <ArrowUp className="w-4 h-4 text-gray-400" />
               )}
-              <span className={voteScore > 0 ? "text-orange-500" : voteScore < 0 ? "text-blue-500" : "text-gray-500"}>
+              <span
+                className={
+                  voteScore > 0
+                    ? "text-orange-500"
+                    : voteScore < 0
+                      ? "text-blue-500"
+                      : "text-gray-500"
+                }
+              >
                 {voteScore} votes
               </span>
             </div>
@@ -236,7 +282,9 @@ export function PostDetailsDialog({ isOpen, onClose, post, onDeleteComment }: Po
                             </p>
                           )}
                         </div>
-                        <p className="text-sm text-gray-700 break-words">{comment.content}</p>
+                        <p className="text-sm text-gray-700 break-words">
+                          {comment.content}
+                        </p>
                       </div>
                     </div>
 
@@ -255,7 +303,8 @@ export function PostDetailsDialog({ isOpen, onClose, post, onDeleteComment }: Po
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete Comment</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete this comment? This cannot be undone.
+                            Are you sure you want to delete this comment? This
+                            cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>

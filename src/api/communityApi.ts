@@ -20,6 +20,34 @@ export const deletePost = async (id: number | string) => {
   return res.data;
 };
 
+// ================= ADMIN POSTS =================
+
+export const getAdminPosts = async () => {
+  const response = await axiosInstance.get("/Posts/admin");
+  return response.data;
+};
+
+export const updatePostStatus = async (
+  postId: number | string,
+  status: "Pending" | "Approved" | "Rejected"
+) => {
+  const response = await axiosInstance.put(
+    `/Posts/${postId}/status`,
+    {
+      status,
+    }
+  );
+
+  return response.data;
+};
+
+// ================= USER POSTS =================
+
+export const getMyPosts = async () => {
+  const response = await axiosInstance.get("/Posts/my-posts");
+  return response.data;
+};
+
 export const savePost = async (postId) => {
   const response = await axiosInstance.post(`/posts/${postId}/save`);
   return response.data;
@@ -31,24 +59,42 @@ export const getSavedPosts = async () => {
 };
 
 export const votePost = async (postId, voteType) => {
-  const response = await axiosInstance.post(`/posts/${postId}/vote`, {
-    voteType,
-  });
+  const response = await axiosInstance.post(
+    `/posts/${postId}/vote`,
+    {
+      voteType,
+    }
+  );
+
   return response.data;
 };
 
 export const getPostComments = async (postId) => {
-  const response = await axiosInstance.get(`/posts/${postId}/comments`);
+  const response = await axiosInstance.get(
+    `/posts/${postId}/comments`
+  );
   return response.data;
 };
 
-export const createComment = async (postId, content) => {
-  const response = await axiosInstance.post(`/posts/${postId}/comments`, {
-    content,
-  });
+export const createComment = async (
+  postId,
+  content
+) => {
+  const response = await axiosInstance.post(
+    `/posts/${postId}/comments`,
+    {
+      content,
+    }
+  );
+
   return response.data;
 };
 
-export const deleteComment = async (postId, commentId) => {
-  await axiosInstance.delete(`/posts/${postId}/comments/${commentId}`);
+export const deleteComment = async (
+  postId,
+  commentId
+) => {
+  await axiosInstance.delete(
+    `/posts/${postId}/comments/${commentId}`
+  );
 };

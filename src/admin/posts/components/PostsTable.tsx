@@ -2,19 +2,29 @@ import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
 import { Eye, Trash2, ArrowUp, ArrowDown, MessageCircle } from "lucide-react";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel,
-  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
-  AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "../../../components/ui/alert-dialog";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "../../../components/ui/select";
-import "../components/posts-admin.css"; 
+import "../components/posts-admin.css";
 
 export enum PostStatus {
-  Pending = 1,
-  Approved = 2,
-  Rejected = 3,
+  Pending = "Pending",
+  Approved = "Approved",
+  Rejected = "Rejected",
 }
 
 interface PostsTableProps {
@@ -24,27 +34,38 @@ interface PostsTableProps {
   onStatusChange: (postId: number | string, newStatus: PostStatus) => void;
 }
 
-export function PostsTable({ posts, onDelete, onViewDetails, onStatusChange }: PostsTableProps) {
+export function PostsTable({
+  posts,
+  onDelete,
+  onViewDetails,
+  onStatusChange,
+}: PostsTableProps) {
   const getStatusBadge = (status: PostStatus) => {
     switch (status) {
       case PostStatus.Pending:
-        return <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-200">Pending</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="bg-orange-50 text-orange-600 border-orange-200"
+          >
+            Pending
+          </Badge>
+        );
       case PostStatus.Approved:
-        return <Badge className="bg-green-500 hover:bg-green-600 text-white">Approved</Badge>;
+        return (
+          <Badge className="bg-green-500 hover:bg-green-600 text-white">
+            Approved
+          </Badge>
+        );
       case PostStatus.Rejected:
-        return <Badge className="bg-red-500 hover:bg-red-600 text-white">Rejected</Badge>;
+        return (
+          <Badge className="bg-red-500 hover:bg-red-600 text-white">
+            Rejected
+          </Badge>
+        );
       default:
         return <Badge variant="outline">Unknown</Badge>;
     }
-  };
-
-  const parseStatus = (raw: any): PostStatus => {
-    if (typeof raw === "number") return raw as PostStatus;
-    if (typeof raw === "string") {
-      const n = parseInt(raw, 10);
-      if (!isNaN(n)) return n as PostStatus;
-    }
-    return PostStatus.Pending;
   };
 
   return (
@@ -65,8 +86,12 @@ export function PostsTable({ posts, onDelete, onViewDetails, onStatusChange }: P
           </thead>
           <tbody>
             {posts.map((post) => {
-              const safeStatus = parseStatus(post.status ?? post.postStatus ?? post.safeStatus);
-              const voteScore = post.votes ?? post.upvotes ?? post.voteCount ?? 0;
+              const safeStatus =
+                (post.status as PostStatus) ||
+                (post.postStatus as PostStatus) ||
+                PostStatus.Pending;
+              const voteScore =
+                post.votes ?? post.upvotes ?? post.voteCount ?? 0;
 
               return (
                 <tr key={post.id}>
@@ -79,14 +104,18 @@ export function PostsTable({ posts, onDelete, onViewDetails, onStatusChange }: P
                   <td>
                     <div className="pa-author-cell">
                       <div className="pa-avatar">
-                        {(post.userName || post.username || "U").charAt(0).toUpperCase()}
+                        {(post.userName || post.username || "U")
+                          .charAt(0)
+                          .toUpperCase()}
                       </div>
                       <div className="pa-author-info">
                         <p className="pa-author-name">
                           {post.userName || post.username || "Unknown"}
                         </p>
                         <p className="pa-post-date">
-                          {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "—"}
+                          {post.createdAt
+                            ? new Date(post.createdAt).toLocaleDateString()
+                            : "—"}
                         </p>
                       </div>
                     </div>
@@ -109,7 +138,9 @@ export function PostsTable({ posts, onDelete, onViewDetails, onStatusChange }: P
                       ) : (
                         <ArrowUp className="w-4 h-4 text-gray-400" />
                       )}
-                      <span className={`font-bold ${voteScore > 0 ? "text-orange-500" : voteScore < 0 ? "text-blue-500" : "text-gray-500"}`}>
+                      <span
+                        className={`font-bold ${voteScore > 0 ? "text-orange-500" : voteScore < 0 ? "text-blue-500" : "text-gray-500"}`}
+                      >
                         {voteScore}
                       </span>
                     </div>
@@ -119,7 +150,9 @@ export function PostsTable({ posts, onDelete, onViewDetails, onStatusChange }: P
                   <td>
                     <div className="pa-stat-cell pa-stat-cell--comments">
                       <MessageCircle className="w-4 h-4 text-blue-500" />
-                      <span className="font-bold text-blue-500">{post.commentsCount ?? post.comments ?? 0}</span>
+                      <span className="font-bold text-blue-500">
+                        {post.commentsCount ?? post.comments ?? 0}
+                      </span>
                     </div>
                   </td>
 
@@ -131,16 +164,33 @@ export function PostsTable({ posts, onDelete, onViewDetails, onStatusChange }: P
                   {/* Status Dropdown */}
                   <td>
                     <Select
-                      value={safeStatus.toString()}
-                      onValueChange={(val) => onStatusChange(post.id, parseInt(val) as PostStatus)}
+                      value={safeStatus}
+                      onValueChange={(val) =>
+                        onStatusChange(post.id, val as PostStatus)
+                      }
                     >
                       <SelectTrigger className="w-[125px] h-9 bg-gray-50 hover:bg-gray-100 border-gray-200 transition-colors text-xs font-medium">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={PostStatus.Pending.toString()} className="text-xs">Pending</SelectItem>
-                        <SelectItem value={PostStatus.Approved.toString()} className="text-xs">Approved</SelectItem>
-                        <SelectItem value={PostStatus.Rejected.toString()} className="text-xs">Rejected</SelectItem>
+                        <SelectItem
+                          value={PostStatus.Pending.toString()}
+                          className="text-xs"
+                        >
+                          Pending
+                        </SelectItem>
+                        <SelectItem
+                          value={PostStatus.Approved.toString()}
+                          className="text-xs"
+                        >
+                          Approved
+                        </SelectItem>
+                        <SelectItem
+                          value={PostStatus.Rejected.toString()}
+                          className="text-xs"
+                        >
+                          Rejected
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </td>
@@ -171,12 +221,16 @@ export function PostsTable({ posts, onDelete, onViewDetails, onStatusChange }: P
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete Post</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Delete post #{String(post.id).padStart(4, "0")} permanently? This cannot be undone.
+                              Delete post #{String(post.id).padStart(4, "0")}{" "}
+                              permanently? This cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => onDelete(post.id)} className="bg-red-500 hover:bg-red-600">
+                            <AlertDialogAction
+                              onClick={() => onDelete(post.id)}
+                              className="bg-red-500 hover:bg-red-600"
+                            >
                               Delete
                             </AlertDialogAction>
                           </AlertDialogFooter>

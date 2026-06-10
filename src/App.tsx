@@ -27,6 +27,7 @@ import { LoginPage } from "./pages/auth/LoginPage";
 // 👤 User / Community Pages
 import ProfilePage from "./pages/profile/ProfilePage";
 import { CommunityPage } from "./pages/CommunityPage";
+import { MyPostsPage } from "./pages/MyPostsPage";
 import { PostDetailsPage } from "./pages/PostDetailsPage";
 import { GhostCraftPage } from "./pages/GhostCraftPage";
 import { GhostCraftSummaryPage } from "./pages/GhostCraftSummaryPage";
@@ -45,8 +46,7 @@ import { RecipesPage as AdminRecipesPage } from "./admin/recipes/RecipesPage";
 import { UsersPage } from "./admin/users/UsersPage";
 import { PostsPage } from "./admin/posts/PostsPage";
 import { CategoriesPage } from "./admin/categories/CategoriesPage";
-// Aliased to prevent conflict with the User OrdersPage
-import { OrdersPage as AdminOrdersPage } from "./admin/orders/OrdersPage"; 
+import { OrdersPage as AdminOrdersPage } from "./admin/orders/OrdersPage";
 
 export default function App() {
   return (
@@ -56,7 +56,6 @@ export default function App() {
           <ChatbotProvider>
             <AdminInitializer />
 
-            {/* 🔥 Toaster global */}
             <Toaster richColors position="top-right" />
 
             <Routes>
@@ -77,13 +76,18 @@ export default function App() {
                 <Route path="saved-recipes" element={<SavedRecipesPage />} />
                 <Route path="saved-products" element={<SavedProductsPage />} />
                 <Route path="saved-posts" element={<SavedPostsPage />} />
+
                 <Route path="community" element={<CommunityPage />} />
+                <Route path="my-posts" element={<MyPostsPage />} />
                 <Route path="posts/:id" element={<PostDetailsPage />} />
-                
+
                 {/* 👻 GHOST CRAFT */}
                 <Route path="ghost-craft" element={<GhostCraftPage />} />
                 <Route path="ghostcraft" element={<GhostCraftPage />} />
-                <Route path="ghostcraft-summary" element={<GhostCraftSummaryPage />} />
+                <Route
+                  path="ghostcraft-summary"
+                  element={<GhostCraftSummaryPage />}
+                />
 
                 {/* 📦 USER ORDERS */}
                 <Route path="orders" element={<OrdersPage />} />
@@ -111,7 +115,6 @@ export default function App() {
               {/* ❌ 404 FALLBACK */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-
           </ChatbotProvider>
         </CheckoutProvider>
       </CartProvider>
