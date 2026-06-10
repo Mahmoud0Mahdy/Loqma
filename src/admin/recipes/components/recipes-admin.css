@@ -117,3 +117,13 @@
   text-transform: uppercase; 
   letter-spacing: 0.05em; 
 }
+
+/* الألوان الجديدة للمستويات الإضافية */
+.rs-mini-icon--blue   { background: #eff6ff; color: #3b82f6; }
+.rs-mini-value--blue  { color: #3b82f6; }
+
+.rs-mini-icon--indigo { background: #e0e7ff; color: #6366f1; }
+.rs-mini-value--indigo{ color: #6366f1; }
+
+.rs-mini-icon--purple { background: #faf5ff; color: #a855f7; }
+.rs-mini-value--purple{ color: #a855f7; }

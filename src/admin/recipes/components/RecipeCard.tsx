@@ -36,26 +36,67 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
   };
 
   const image = (recipe as any).imageUrl || recipe.image;
-  const prepTime = (recipe as any).prepTime ? `${(recipe as any).prepTime} min` : recipe.time;
-  
-  // معالجة حالة الحروف عشان يقراها صح دايماً
-  const rawDifficulty = ((recipe as any).difficultyLevel || recipe.difficulty || "Easy").toLowerCase().trim();
-  const category = (recipe as any).categoryName || recipe.category;
+  const prepTime =
+    (recipe as any).prepTime
+      ? `${(recipe as any).prepTime} min`
+      : recipe.time;
 
-  // تحديد اللون بناءً على المستوى
-  let diffBg = "bg-green-100 text-green-700 hover:bg-green-200";
+  const category =
+    (recipe as any).categoryName || recipe.category;
+
+  // 🔥 Difficulty Parsing
+  let rawDifficulty = (
+    (recipe as any).difficulty ??
+    (recipe as any).difficultyLevel ??
+    "Easy"
+  )
+    .toString()
+    .toLowerCase()
+    .trim();
+
+  let diffBg =
+    "bg-green-100 text-green-700 hover:bg-green-200";
   let diffLabel = "Easy";
-  if (rawDifficulty === "medium") {
-    diffBg = "bg-orange-100 text-orange-700 hover:bg-orange-200";
+
+  if (
+    rawDifficulty === "intermediate" ||
+    rawDifficulty === "1"
+  ) {
+    diffBg =
+      "bg-blue-100 text-blue-700 hover:bg-blue-200";
+    diffLabel = "Intermediate";
+  } else if (
+    rawDifficulty === "medium" ||
+    rawDifficulty === "2"
+  ) {
+    diffBg =
+      "bg-orange-100 text-orange-700 hover:bg-orange-200";
     diffLabel = "Medium";
-  } else if (rawDifficulty === "hard") {
-    diffBg = "bg-red-100 text-red-700 hover:bg-red-200";
+  } else if (
+    rawDifficulty === "advanced" ||
+    rawDifficulty === "3"
+  ) {
+    diffBg =
+      "bg-indigo-100 text-indigo-700 hover:bg-indigo-200";
+    diffLabel = "Advanced";
+  } else if (
+    rawDifficulty === "hard" ||
+    rawDifficulty === "4"
+  ) {
+    diffBg =
+      "bg-red-100 text-red-700 hover:bg-red-200";
     diffLabel = "Hard";
+  } else if (
+    rawDifficulty === "expert" ||
+    rawDifficulty === "5"
+  ) {
+    diffBg =
+      "bg-purple-100 text-purple-700 hover:bg-purple-200";
+    diffLabel = "Expert";
   }
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* تم تصغير ارتفاع الصورة لـ h-40 */}
       <img
         src={image}
         alt={recipe.title}
@@ -63,7 +104,10 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
       />
 
       <div className="p-4 flex flex-col flex-1">
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-1" title={recipe.title}>
+        <h3
+          className="font-semibold text-gray-900 mb-2 line-clamp-1"
+          title={recipe.title}
+        >
           {recipe.title}
         </h3>
 
@@ -72,6 +116,7 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
             <Clock className="w-3.5 h-3.5" />
             <span>{prepTime}</span>
           </div>
+
           <div className="flex items-center gap-1">
             <Users className="w-3.5 h-3.5" />
             <span>{recipe.servings}</span>
@@ -79,35 +124,18 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
         </div>
 
         <div className="flex items-center gap-2 mb-4 mt-auto">
-          <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700 font-medium">
+          <Badge
+            variant="secondary"
+            className="text-xs bg-gray-100 text-gray-700 font-medium"
+          >
             {category}
           </Badge>
 
-<<<<<<< Updated upstream
-          <Badge className={`text-xs font-bold border-none ${diffBg}`}>
+          <Badge
+            className={`text-xs font-bold border-none ${diffBg}`}
+          >
             {diffLabel}
           </Badge>
-=======
-          <Badge
-  variant={
-    difficulty === "Easy"
-      ? "default"
-      : difficulty === "Intermediate"
-        ? "destructive"
-        : difficulty === "Medium"
-          ? "secondary"
-          : difficulty === "Advanced"
-            ? "destructive"
-            : difficulty === "Hard"
-              ? "destructive"
-              : difficulty === "Expert"
-                ? "destructive"
-                : "secondary"
-  }
->
-  {difficulty}
-</Badge>
->>>>>>> Stashed changes
         </div>
 
         <div className="flex gap-2">
@@ -117,7 +145,8 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
             onClick={() => onEdit(recipe)}
             className="flex-1 h-8 text-xs font-medium"
           >
-            <Pencil className="w-3.5 h-3.5 mr-1.5" /> Edit
+            <Pencil className="w-3.5 h-3.5 mr-1.5" />
+            Edit
           </Button>
 
           <AlertDialog>
@@ -130,16 +159,24 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
                 <Trash2 className="w-4 h-4" />
               </Button>
             </AlertDialogTrigger>
+
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete Recipe</AlertDialogTitle>
+                <AlertDialogTitle>
+                  Delete Recipe
+                </AlertDialogTitle>
+
                 <AlertDialogDescription>
-                  Are you sure you want to delete {recipe.title}? This action
-                  cannot be undone.
+                  Are you sure you want to delete{" "}
+                  {recipe.title}? This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
+
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>
+                  Cancel
+                </AlertDialogCancel>
+
                 <AlertDialogAction
                   onClick={handleDelete}
                   className="bg-red-500 hover:bg-red-600"
