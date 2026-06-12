@@ -116,7 +116,11 @@ export function MessageItem({ message }: { message: Message }) {
                 </div>
               </div>
             ) : (
-              <p className="whitespace-pre-wrap">{message.content}</p>
+              /* التعديل حصل في الجزء ده عشان يقرا الـ HTML بشكل صحيح */
+              <div 
+                className="whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{ __html: message.content }} 
+              />
             )}
           </div>
 

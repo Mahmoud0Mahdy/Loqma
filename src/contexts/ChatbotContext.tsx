@@ -43,11 +43,12 @@ const ChatbotContext = createContext<
   ChatbotContextType | undefined
 >(undefined);
 
+// الرسالة الافتراضية متعدلة بالـ HTML عشان تظهر بشكل تحذيري
 const DEFAULT_MESSAGE: Message = {
   id: '1',
   role: 'assistant',
   content:
-    "Hello! I'm your AI cooking assistant. Tell me what ingredients you have, your dietary preferences, or what type of meal you're looking for, and I'll suggest the perfect recipes for you!",
+    "Hello! I'm your AI cooking assistant. Tell me what ingredients you have, your dietary preferences, or what type of meal you're looking for, and I'll suggest the perfect recipes for you!<br/><br/><strong style='color: #ef4444; text-decoration: underline; line-height: 1.5;'>⚠️ PLEASE: INPUT YOUR ALLERGIES AND DIETARY RESTRICTIONS IF YOU HAVE ANY. WE ARE NOT RESPONSIBLE FOR ANY ALLERGIC REACTIONS OR HEALTH ISSUES THAT MAY ARISE FROM THE SUGGESTED RECIPES.</strong><br/><br/>ENJOY COOKING!",
   timestamp: new Date(),
 };
 
@@ -139,7 +140,7 @@ export function ChatbotProvider({
 
       const mappedMessages: Message[] =
         session.messages.map(
-          (message, index) => ({
+          (message: any, index: number) => ({
             id: `${sessionId}-${index}`,
             role: message.role,
             content: message.content,
