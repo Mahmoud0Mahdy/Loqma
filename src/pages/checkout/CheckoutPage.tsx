@@ -34,36 +34,65 @@ export function CheckoutPage() {
 
   const location = useLocation();
 
-  const { cart, fetchCart, fetchSummary } = useCart();
+  const { cart, loading, fetchCart, fetchSummary } = useCart();
 
   const { checkoutData, setCheckoutField, setCheckoutData, resetCheckout } =
     useCheckout();
 
-  const [step, setStep] = useState(1);
+  const CHECKOUT_STEP_STORAGE_KEY = "checkoutStep";
+  const CHECKOUT_FORM_STORAGE_KEY = "checkoutFormData";
+  const CHECKOUT_PRODUCT_STORAGE_KEY = "checkoutQuickProduct";
+  const CHECKOUT_QUANTITY_STORAGE_KEY = "checkoutQuickQuantity";
+  const [step, setStep] = useState(() => {
+    const savedStep = sessionStorage.getItem(CHECKOUT_STEP_STORAGE_KEY);
+
+    return savedStep ? Number(savedStep) : 1;
+  });
 
   const [loadingProfile, setLoadingProfile] = useState(true);
 
   const [placingOrder, setPlacingOrder] = useState(false);
 
-  const quickProduct = location.state?.quickProduct;
+  const savedQuickProduct = sessionStorage.getItem(
+    CHECKOUT_PRODUCT_STORAGE_KEY,
+  );
 
-  const quickQuantity = location.state?.quickQuantity;
+  const savedQuickQuantity = sessionStorage.getItem(
+    CHECKOUT_QUANTITY_STORAGE_KEY,
+  );
+  useEffect(() => {
+    if (location.state?.quickProduct) {
+      sessionStorage.setItem(
+        CHECKOUT_PRODUCT_STORAGE_KEY,
+        JSON.stringify(location.state.quickProduct),
+      );
 
-  // 🔥 source
+      sessionStorage.setItem(
+        CHECKOUT_QUANTITY_STORAGE_KEY,
+        String(location.state.quickQuantity || 1),
+      );
+    }
+  }, [location.state]);
+
+  const quickProduct =
+    location.state?.quickProduct ||
+    (savedQuickProduct ? JSON.parse(savedQuickProduct) : null);
+
+  const quickQuantity =
+    location.state?.quickQuantity || Number(savedQuickQuantity || 1);
+
+  // source
   const source = quickProduct ? "buynow" : "cart";
 
-  // 🔥 تجهيز checkout draft
+  // checkout draft
   useEffect(() => {
     setCheckoutData({
       source,
-
       productId: quickProduct?.id ? Number(quickProduct.id) : undefined,
-
       quantity: quickQuantity,
-
       requestId: crypto.randomUUID(),
     });
-  }, []);
+  }, [source, quickProduct, quickQuantity]);
 
   // 🔥 cart items
   const cartItems = quickProduct
@@ -76,26 +105,42 @@ export function CheckoutPage() {
     : cart || [];
 
   // 🔥 form state
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
+  const [formData, setFormData] = useState(() => {
+    const saved = sessionStorage.getItem(CHECKOUT_FORM_STORAGE_KEY);
 
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
+    if (saved) {
+      return JSON.parse(saved);
+    }
 
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    cardName: "",
+    return {
+      fullName: "",
+      email: "",
+      phone: "",
 
-    saveInfo: false,
-    sameAddress: true,
+      address: "",
+      city: "",
+      state: "",
+      zipCode: "",
 
-    deliveryMethod: "standard",
+      cardNumber: "",
+      expiryDate: "",
+      cvv: "",
+      cardName: "",
+
+      saveInfo: false,
+      sameAddress: true,
+
+      deliveryMethod: "standard",
+    };
   });
+  useEffect(() => {
+    sessionStorage.setItem(CHECKOUT_STEP_STORAGE_KEY, step.toString());
+  }, [step]);
+  useEffect(() => {
+    const { cardNumber, expiryDate, cvv, cardName, ...safeData } = formData;
+
+    sessionStorage.setItem(CHECKOUT_FORM_STORAGE_KEY, JSON.stringify(safeData));
+  }, [formData]);
 
   // 🔥 prefill profile
   useEffect(() => {
@@ -105,38 +150,17 @@ export function CheckoutPage() {
 
         const updated = {
           fullName: data.fullName || "",
-
           email: data.email || "",
-
           phone: data.phone || "",
-
           address: data.address || "",
-
           city: data.city || "",
-
           state: data.state || "",
-
           zipCode: data.zipCode || "",
-
-          cardNumber: "",
-          expiryDate: "",
-          cvv: "",
-          cardName: "",
-
-          saveInfo: false,
-          sameAddress: true,
-
-          deliveryMethod: "standard",
         };
 
         setFormData(updated);
-
-        setCheckoutData({
-          ...checkoutData,
-          ...updated,
-        });
-      } catch {
-        console.log("Failed to load profile");
+      } catch (err) {
+        console.error("❌ PROFILE ERROR:", err);
       } finally {
         setLoadingProfile(false);
       }
@@ -231,6 +255,13 @@ export function CheckoutPage() {
       toast.success("Order placed successfully!");
 
       resetCheckout();
+      sessionStorage.removeItem(CHECKOUT_STEP_STORAGE_KEY);
+
+      sessionStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY);
+
+      sessionStorage.removeItem(CHECKOUT_PRODUCT_STORAGE_KEY);
+
+      sessionStorage.removeItem(CHECKOUT_QUANTITY_STORAGE_KEY);
 
       navigate("/");
     } catch (err) {
@@ -243,6 +274,14 @@ export function CheckoutPage() {
   };
 
   // 🔥 protection
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading checkout...
+      </div>
+    );
+  }
+
   if (!quickProduct && (!cart || cart.length === 0)) {
     return <Navigate to="/cart" replace />;
   }
