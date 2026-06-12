@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { toast } from 'sonner';
 import { createPost } from '../api/communityApi';
 
+import './create-post-modal.css';
+
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -43,14 +45,27 @@ export function CreatePostModal({ isOpen, onClose, onPostCreated }: CreatePostMo
       toast.error('Please enter a title');
       return;
     }
+    if (title.length > 200) {
+      toast.error('Title cannot exceed 200 characters');
+      return;
+    }
     
     if (!content.trim()) {
       toast.error('Please enter some content');
       return;
     }
+    if (content.length > 2000) {
+      toast.error('Content cannot exceed 2000 characters');
+      return;
+    }
     
     if (!selectedTag) {
       toast.error('Please select a tag');
+      return;
+    }
+
+    if (imageUrl.length > 500) {
+      toast.error('Image URL cannot exceed 500 characters');
       return;
     }
 
@@ -78,61 +93,67 @@ export function CreatePostModal({ isOpen, onClose, onPostCreated }: CreatePostMo
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="cpm-overlay">
+      <div className="cpm-modal">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-          <h2 className="text-gray-900">Create a Post</h2>
+        <div className="cpm-header">
+          <h2 className="cpm-title">Create a Post</h2>
           <button
+            type="button"
             onClick={handleClose}
             title="Close modal"
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="cpm-close-btn"
           >
-            <X size={20} className="text-gray-600" />
+            <X size={20} />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="cpm-form">
+          
           {/* Title */}
           <div>
-            <label htmlFor="title" className="block mb-2 text-gray-700">
-              Title
-            </label>
+            <div className="cpm-label-row">
+              <label htmlFor="title" className="cpm-label">Title</label>
+              <span className={`cpm-counter ${title.length > 200 ? 'error' : ''}`}>
+                {title.length}/200
+              </span>
+            </div>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="What's on your mind?"
-              className="rounded-lg"
+              className={title.length > 200 ? 'cpm-input-error' : ''}
             />
           </div>
 
           {/* Content */}
           <div>
-            <label htmlFor="content" className="block mb-2 text-gray-700">
-              Content
-            </label>
+            <div className="cpm-label-row">
+              <label htmlFor="content" className="cpm-label">Content</label>
+              <span className={`cpm-counter ${content.length > 2000 ? 'error' : ''}`}>
+                {content.length}/2000
+              </span>
+            </div>
+            {/* 🔥 ضفنا كلاس cpm-textarea هنا عشان السكرول الداخلي يشتغل */}
             <Textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Share your thoughts, recipe, or question..."
-              className="rounded-lg min-h-[120px] resize-none"
-              rows={5}
+              className={`cpm-textarea ${content.length > 2000 ? 'cpm-input-error' : ''}`}
             />
           </div>
 
           {/* Tag Selection */}
           <div>
-            <label htmlFor="tag" className="block mb-2 text-gray-700">
-              Tag
-            </label>
+            <label htmlFor="tag" className="cpm-label mb-2" style={{ marginBottom: '8px' }}>Tag</label>
             <Select
               value={selectedTag ? String(selectedTag) : ''}
               onValueChange={(value) => setSelectedTag(Number(value))}
             >
-              <SelectTrigger className="rounded-lg">
+              <SelectTrigger>
                 <SelectValue placeholder="Select a tag" />
               </SelectTrigger>
               <SelectContent>
@@ -147,43 +168,50 @@ export function CreatePostModal({ isOpen, onClose, onPostCreated }: CreatePostMo
 
           {/* Image URL */}
           <div>
-            <label htmlFor="imageUrl" className="block mb-2 text-gray-700">
-              Image URL (optional)
-            </label>
+            <div className="cpm-label-row">
+              <label htmlFor="imageUrl" className="cpm-label">
+                Image URL <span className="cpm-optional">(optional)</span>
+              </label>
+              <span className={`cpm-counter ${imageUrl.length > 500 ? 'error' : ''}`}>
+                {imageUrl.length}/500
+              </span>
+            </div>
             <Input
               id="imageUrl"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://example.com/image.jpg"
-              className="rounded-lg"
+              className={imageUrl.length > 500 ? 'cpm-input-error' : ''}
             />
+            
             {imageUrl && (
-              <div className="mt-3 rounded-lg overflow-hidden border border-gray-200">
+              <div className="cpm-image-preview">
                 <img
                   src={imageUrl}
                   alt="Preview"
-                  className="w-full h-48 object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://placehold.co/800x400/f3f4f6/9ca3af?text=Invalid+Image+URL';
+                  }}
                 />
               </div>
             )}
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4">
-            <Button
+          <div className="cpm-actions">
+            <button
               type="button"
-              variant="outline"
               onClick={handleClose}
-              className="flex-1 rounded-full"
+              className="cpm-btn-cancel"
             >
               Cancel
-            </Button>
-            <Button
+            </button>
+            <button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-full"
+              className="cpm-btn-submit"
             >
               Post
-            </Button>
+            </button>
           </div>
         </form>
       </div>

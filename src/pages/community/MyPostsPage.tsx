@@ -5,12 +5,13 @@ import { Button } from "../../components/ui/button";
 import { getMyPosts, savePost } from "../../api/communityApi";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
-// 🔥 رجعنا الأيقونات الأساسية اللي كانت شغالة معاك بدون مشاكل
 import { Layers, CheckCircle2, Clock, XCircle, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
+import { useApp } from "../../contexts/AppContext"; // 🔥 استيراد الـ AppContext
 import "./my-posts.css";
 
 export function MyPostsPage() {
   const navigate = useNavigate();
+  const { state } = useApp(); // 🔥 عشان نجيب بيانات اليوزر
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +21,9 @@ export function MyPostsPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 5;
+
+  // 🔥 التأكد إن اليوزر Admin
+  const isAdmin = state.user?.role === "Admin" || state.user?.role === "admin";
 
   const mapApiPostToPostCard = (post: any): Post => {
     const createdAtValue = post.createdAt;
@@ -96,12 +100,17 @@ export function MyPostsPage() {
     setCurrentPage(1);
   }, [activeFilter]);
 
-  const filters = [
-    { id: "All", label: "All Posts", icon: Layers },
-    { id: "Approved", label: "Approved", icon: CheckCircle2 },
-    { id: "Pending", label: "Pending", icon: Clock },
-    { id: "Rejected", label: "Rejected", icon: XCircle },
-  ] as const;
+  // 🔥 فلترة العناصر الجانبية: لو أدمن يظهر "Total Posts" بس، لو يوزر عادي يظهر كل الحالات
+  const filters = isAdmin 
+    ? [
+        { id: "All", label: "Total Posts", icon: Layers }
+      ] as const
+    : [
+        { id: "All", label: "All Posts", icon: Layers },
+        { id: "Approved", label: "Approved", icon: CheckCircle2 },
+        { id: "Pending", label: "Pending", icon: Clock },
+        { id: "Rejected", label: "Rejected", icon: XCircle },
+      ] as const;
 
   return (
     <div className="mp-wrapper">
@@ -119,7 +128,8 @@ export function MyPostsPage() {
         
         {/* Sidebar الفلتر على الشمال */}
         <aside className="mp-sidebar">
-          <h3 className="mp-filter-title">Filter by Status</h3>
+          {/* 🔥 تغيير العنوان لو أدمن */}
+          <h3 className="mp-filter-title">{isAdmin ? "Overview" : "Filter by Status"}</h3>
           <div>
             {filters.map((filter) => {
               const Icon = filter.icon;
@@ -131,8 +141,9 @@ export function MyPostsPage() {
               return (
                 <button
                   key={filter.id}
-                  onClick={() => setActiveFilter(filter.id)}
+                  onClick={() => setActiveFilter(filter.id as FilterType)}
                   className={`mp-filter-btn ${isActive ? 'active' : ''}`}
+                  style={isAdmin ? { cursor: "default" } : {}} // لو أدمن الزرار بيبقى للعرض بس مش كليك
                 >
                   <Icon size={18} className="mp-filter-icon" />
                   {filter.label}

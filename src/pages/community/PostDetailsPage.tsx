@@ -14,6 +14,20 @@ import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+
+// 🔥 استيراد مكونات الـ AlertDialog لرسالة التأكيد
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../../components/ui/alert-dialog";
+
 import {
   createComment,
   deleteComment,
@@ -26,7 +40,7 @@ import {
 import { Post } from "../../components/PostCard";
 import { useApp } from "../../contexts/AppContext";
 
-// 🔥 تأكد إن مسار ملف الـ CSS ده مظبوط عندك
+// ملف الـ CSS
 import "./post-details.css";
 
 interface CommentItem {
@@ -246,7 +260,6 @@ export function PostDetailsPage() {
     );
   }
 
-  // 🔥 الكود ده بقى بيستخدم كلاسات الـ CSS بتاعتك
   return (
     <div className="pd-wrapper">
       <div className="pd-container">
@@ -270,20 +283,35 @@ export function PostDetailsPage() {
               </div>
             </div>
 
+            {/* 🔥 إضافة Validation لمسح البوست */}
             {canDeletePost() && (
-              <button
-                onClick={handleDeletePost}
-                style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px" }}
-              >
-                <Trash2 size={20} />
-              </button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px" }}>
+                    <Trash2 size={20} />
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Post</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Delete this post permanently? This cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeletePost} className="bg-red-500 hover:bg-red-600 text-white">
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
 
           <h1 className="pd-title">{post.title}</h1>
           <p className="pd-content">{post.content}</p>
 
-          {/* 🔥 الصورة بحد أقصى 400px وبتظهر كاملة (object-fit: contain) جوة المربع */}
           {post.imageUrl && (
             <div className="pd-image-wrapper">
               <img
@@ -376,13 +404,29 @@ export function PostDetailsPage() {
                       </div>
                     </div>
 
+                    {/* 🔥 إضافة Validation لمسح الكومنت */}
                     {canDeleteComment(comment) && (
-                      <button
-                        onClick={() => handleDeleteComment(comment.id)}
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-md transition-colors"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <button className="text-red-500 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-md transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Comment</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this comment?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDeleteComment(comment.id)} className="bg-red-500 hover:bg-red-600 text-white">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     )}
                   </div>
                   <p className="text-gray-700 mt-3 text-sm leading-relaxed">{comment.content}</p>
