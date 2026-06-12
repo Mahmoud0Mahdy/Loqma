@@ -28,6 +28,9 @@ export interface CheckoutData {
   requestId?: string;
 
   orderId?: number;
+
+  // 🔥 NEW
+  usedSavedCard?: boolean;
 }
 
 interface CheckoutContextType {
@@ -47,7 +50,6 @@ export function CheckoutProvider({
 }: {
   children: ReactNode;
 }) {
-
   const [checkoutData, setCheckoutDataState] =
     useState<CheckoutData>({});
 
@@ -55,7 +57,6 @@ export function CheckoutProvider({
     field: string,
     value: any
   ) => {
-
     setCheckoutDataState((prev) => ({
       ...prev,
       [field]: value,
@@ -65,7 +66,6 @@ export function CheckoutProvider({
   const setCheckoutData = (
     data: CheckoutData
   ) => {
-
     setCheckoutDataState((prev) => ({
       ...prev,
       ...data,
@@ -91,7 +91,6 @@ export function CheckoutProvider({
 }
 
 export function useCheckout() {
-
   const context = useContext(CheckoutContext);
 
   if (!context) {

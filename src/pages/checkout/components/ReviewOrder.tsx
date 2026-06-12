@@ -12,7 +12,6 @@ import { useCheckout } from "../../../contexts/CheckoutContext";
 export function ReviewOrder({
   formData,
   cart,
-  setStep,
   placeOrder,
   placingOrder,
 }: any) {
@@ -43,7 +42,13 @@ export function ReviewOrder({
           <h3 className="font-semibold mb-2">Payment Method</h3>
 
           {checkoutData.paymentMethodId === 2 ? (
-            <div className="text-gray-600">Cash On Delivery</div>
+            <div className="text-gray-600">
+              Cash On Delivery
+            </div>
+          ) : checkoutData.usedSavedCard ? (
+            <div className="text-gray-600">
+              Saved Card
+            </div>
           ) : (
             <div className="text-gray-600">
               **** **** **** {formData.cardNumber?.slice(-4)}
@@ -57,21 +62,23 @@ export function ReviewOrder({
 
           <div className="space-y-3">
             {(cart || []).map((item: any) => {
-              // 🔥 detect ghost craft
               const isGhostCraft = !!item.ghostCraftOrderId;
 
-              // 🔥 support old + new api
               const productName =
                 item.product?.name ||
                 item.name ||
-                (isGhostCraft ? "Ghost Craft Meal" : "Unknown Product");
+                (isGhostCraft
+                  ? "Ghost Craft Meal"
+                  : "Unknown Product");
 
               const productPrice = Number(
-                item.product?.price ?? item.price ?? 0,
+                item.product?.price ?? item.price ?? 0
               );
 
               const itemKey =
-                item.product?.id || item.productId || item.cartItemId;
+                item.product?.id ||
+                item.productId ||
+                item.cartItemId;
 
               return (
                 <div
@@ -79,14 +86,15 @@ export function ReviewOrder({
                   className="flex items-center justify-between border-b pb-2"
                 >
                   <div>
-                    {/* 🔥 ghost craft badge */}
                     {isGhostCraft && (
                       <div className="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-semibold mb-2">
                         Ghost Craft
                       </div>
                     )}
 
-                    <p className="font-medium text-gray-900">{productName}</p>
+                    <p className="font-medium text-gray-900">
+                      {productName}
+                    </p>
 
                     <p className="text-sm text-gray-500">
                       Quantity: {item.quantity}
@@ -102,33 +110,16 @@ export function ReviewOrder({
           </div>
         </div>
 
-        {/* BUTTONS */}
-        <div className="flex space-x-4 pt-2">
-          <Button
-            variant="outline"
-            onClick={() => {
-              // 🔥 CASH
-              if (checkoutData.paymentMethodId === 2) {
-                setStep(2);
-
-                return;
-              }
-
-              // 🔥 CARD
-              setStep(4);
-            }}
-            className="flex-1"
-            disabled={placingOrder}
-          >
-            Back
-          </Button>
-
+        {/* BUTTON */}
+        <div className="pt-2">
           <Button
             onClick={placeOrder}
             disabled={placingOrder}
-            className="flex-1 bg-green-600 hover:bg-green-700"
+            className="w-full bg-green-600 hover:bg-green-700"
           >
-            {placingOrder ? "Placing Order..." : "Place Order"}
+            {placingOrder
+              ? "Placing Order..."
+              : "Place Order"}
           </Button>
         </div>
       </CardContent>

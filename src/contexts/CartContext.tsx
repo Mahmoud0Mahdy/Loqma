@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useEffect,
   useCallback,
+  useState,
 } from "react";
 
 import {
@@ -71,7 +72,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         cart: state.cart.map((item) =>
           item.cartItemId === action.itemId
             ? { ...item, quantity: action.quantity }
-            : item
+            : item,
         ),
       };
     case "REMOVE_ITEM":
@@ -94,11 +95,15 @@ const CartContext = createContext<any>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [loading, setLoading] = useState(true);
 
   // ================= FETCH CART =================
   const fetchCart = useCallback(async () => {
     try {
+      setLoading(true);
+
       const data = await getCart();
+
       const mapped = data.items.map((item: any) => ({
         cartItemId: item.cartItemId,
         quantity: item.quantity,
@@ -118,9 +123,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
           : undefined,
       }));
 
-      dispatch({ type: "SET_CART", cart: mapped });
+      dispatch({
+        type: "SET_CART",
+        cart: mapped,
+      });
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -153,7 +163,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         console.error(err);
       }
     },
-    [fetchCart, fetchSummary]
+    [fetchCart, fetchSummary],
   );
 
   // ================= ADD GHOST CRAFT =================
@@ -167,7 +177,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         console.error(err);
       }
     },
-    [fetchCart, fetchSummary]
+    [fetchCart, fetchSummary],
   );
 
   // ================= UPDATE =================
@@ -183,7 +193,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         await fetchCart(); // rollback
       }
     },
-    [fetchCart, fetchSummary]
+    [fetchCart, fetchSummary],
   );
 
   // ================= REMOVE =================
@@ -199,7 +209,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         await fetchCart(); // rollback
       }
     },
-    [fetchCart, fetchSummary]
+    [fetchCart, fetchSummary],
   );
 
   // ================= INIT (الصحيح هنا جوه الـ Provider) =================
@@ -216,10 +226,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       value={{
         cart: state.cart,
         cartSummary: state.cartSummary,
+        loading,
+
         addToCart,
         addGhostCraftToCart,
+
         updateItem,
         removeItem,
+
         fetchCart,
         fetchSummary,
       }}

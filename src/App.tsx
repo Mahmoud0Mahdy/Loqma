@@ -1,4 +1,6 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+
+import { useEffect, useRef } from "react";
 import { Toaster } from "./components/ui/sonner";
 
 // 📦 Contexts
@@ -47,6 +49,33 @@ import { UsersPage } from "./admin/users/UsersPage";
 import { PostsPage } from "./admin/posts/PostsPage";
 import { CategoriesPage } from "./admin/categories/CategoriesPage";
 import { OrdersPage as AdminOrdersPage } from "./admin/orders/OrdersPage";
+function CheckoutSessionGuard() {
+  const location = useLocation();
+
+  const previousPath = useRef<string>(location.pathname);
+
+  useEffect(() => {
+    const wasInCheckout =
+      previousPath.current.startsWith("/checkout");
+
+    const leftCheckout =
+      wasInCheckout &&
+      !location.pathname.startsWith("/checkout");
+
+    if (leftCheckout) {
+      sessionStorage.removeItem("checkoutStep");
+      sessionStorage.removeItem("checkoutFormData");
+      sessionStorage.removeItem("checkoutQuickProduct");
+      sessionStorage.removeItem("checkoutQuickQuantity");
+
+      console.log("🧹 Checkout session cleared");
+    }
+
+    previousPath.current = location.pathname;
+  }, [location.pathname]);
+
+  return null;
+}
 
 export default function App() {
   return (
@@ -57,6 +86,7 @@ export default function App() {
             <AdminInitializer />
 
             <Toaster richColors position="top-right" />
+            <CheckoutSessionGuard />
 
             <Routes>
               {/* 🌐 PUBLIC LAYOUT */}

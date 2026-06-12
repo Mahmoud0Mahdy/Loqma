@@ -28,7 +28,10 @@ export function SavedCardsStep({ setStep }: any) {
 
   const [actionLoading, setActionLoading] = useState<number | null>(null);
 
-  const { checkoutData } = useCheckout();
+const {
+  checkoutData,
+  setCheckoutField,
+} = useCheckout();
 
   const fetchCards = async () => {
     try {
@@ -78,12 +81,14 @@ export function SavedCardsStep({ setStep }: any) {
       });
 
       // 🔥 pay using saved card
-      await payWithSavedCard(checkoutData.orderId || 0, savedCardId);
+await payWithSavedCard(checkoutData.orderId || 0, savedCardId);
 
-      toast.success("Payment completed successfully");
+// 🔥 المستخدم اختار Saved Card
+setCheckoutField("usedSavedCard", true);
 
-      // 🔥 روح للريفيو
-      setStep(5);
+toast.success("Payment completed successfully");
+
+setStep(5);
     } catch (err) {
       console.error(err);
 
