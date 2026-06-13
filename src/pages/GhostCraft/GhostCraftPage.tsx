@@ -14,6 +14,8 @@ import {
   updateGhostCraftOrder,
 } from "../../api/ghostCraftApi";
 
+const MAX_SPECIAL_INSTRUCTIONS_LENGTH = 300;
+const MAX_FOOD_LENGTH = 200;
 export function GhostCraftPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -105,6 +107,15 @@ export function GhostCraftPage() {
       return;
     }
 
+    if (foodName.trim().length < 5) {
+      toast.error("Food description must be at least 5 characters");
+      return;
+    }
+    if (specialInstructions.trim() && specialInstructions.trim().length < 3) {
+      toast.error("Special instructions must be at least 3 characters");
+      return;
+    }
+
     const payload = {
       dishDescription: foodName,
       allergies,
@@ -162,11 +173,25 @@ export function GhostCraftPage() {
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <ChefHat className="text-green-600" size={24} />
-              <h2 className="text-gray-900">What would you like to order?</h2>
+
+              <div className="flex justify-between items-center w-full">
+                <h2 className="text-gray-900">What would you like to order?</h2>
+
+                <span
+                  className={`text-xs ${
+                    foodName.length >= MAX_FOOD_LENGTH
+                      ? "text-red-500"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {foodName.length}/{MAX_FOOD_LENGTH}
+                </span>
+              </div>
             </div>
             <Input
               placeholder="e.g., Grilled salmon with roasted vegetables, Chicken tikka masala..."
               value={foodName}
+              maxLength={MAX_FOOD_LENGTH}
               onChange={(e) => setFoodName(e.target.value)}
               className="w-full"
             />
@@ -289,10 +314,24 @@ export function GhostCraftPage() {
 
           {/* Special Instructions */}
           <Card className="p-6">
-            <h3 className="text-gray-900 mb-4">Special Instructions</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-gray-900">Special Instructions</h3>
+
+              <span
+                className={`text-xs ${
+                  specialInstructions.length >= MAX_SPECIAL_INSTRUCTIONS_LENGTH
+                    ? "text-red-500"
+                    : "text-gray-400"
+                }`}
+              >
+                {specialInstructions.length}/{MAX_SPECIAL_INSTRUCTIONS_LENGTH}
+              </span>
+            </div>
+
             <Textarea
               placeholder="Any additional notes or special requests..."
               value={specialInstructions}
+              maxLength={MAX_SPECIAL_INSTRUCTIONS_LENGTH}
               onChange={(e) => setSpecialInstructions(e.target.value)}
               className="w-full min-h-24"
             />

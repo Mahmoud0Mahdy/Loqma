@@ -41,27 +41,26 @@ export function PaymentMethodStep({
 
       setLoading(true);
 
-      // 🔥 save payment method
+      // save payment method
       setCheckoutField(
         "paymentMethodId",
         paymentMethodId
       );
 
-      // 🔥 CASH
+      // CASH
       if (paymentMethodId === 2) {
 
         toast.success(
           "Cash payment selected"
         );
 
-        // 🔥 روح مباشرة للريفيو
         setStep(5);
 
         return;
       }
 
       // =====================================
-      // 🔥 CARD FLOW
+      // CARD FLOW
       // =====================================
 
       const payload = {
@@ -88,7 +87,7 @@ export function PaymentMethodStep({
         payload
       );
 
-      // 🔥 create order first
+      // create order first
       const response =
         await placeOrder(payload);
 
@@ -97,7 +96,7 @@ export function PaymentMethodStep({
         response
       );
 
-      // 🔥 save orderId
+      // save orderId
       setCheckoutField(
         "orderId",
         response.id
@@ -107,7 +106,7 @@ export function PaymentMethodStep({
         "Card payment selected"
       );
 
-      // 🔥 go to saved cards
+      // go to saved cards
       setStep(3);
 
     } catch (err) {

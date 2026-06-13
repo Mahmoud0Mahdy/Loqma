@@ -14,7 +14,6 @@ export function RecipesSection() {
     fetchRecipes();
   }, []);
 
-  // نفس عدد الكروت زي ما كان (3 بس)
   const recipes = state.recipes.slice(0, 3);
 
   return (

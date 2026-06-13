@@ -5,7 +5,6 @@ export function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // أول ما اللينك يتغير، هيطلع لأول الصفحة فوق خالص
     window.scrollTo({
       top: 0,
       left: 0,

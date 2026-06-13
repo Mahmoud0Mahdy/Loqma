@@ -106,7 +106,6 @@
   font-weight: 700;
 }
 
-/* بنضيف الكلاس ده للـ Input لما يتخطى الحد المسموح */
 .cpm-input-error {
   border-color: #ef4444 !important;
 }
@@ -116,9 +115,8 @@
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
 }
 
-/* ── Image Preview (🔥 المسافة اللي طلبتها متظبطة هنا) ───── */
 .cpm-image-preview {
-  margin-top: 20px; /* 🔥 المسافة بين اللينك والصورة */
+  margin-top: 20px;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
@@ -127,7 +125,7 @@
 
 .cpm-image-preview img {
   width: 100%;
-  height: 192px; /* ارتفاع ثابت ومناسب */
+  height: 192px; 
   object-fit: cover;
   display: block;
 }
@@ -175,12 +173,11 @@
 }
 
 
-/* ضيف الكود ده في ملف create-post-modal.css */
 
 .cpm-textarea {
   min-height: 120px;
-  max-height: 200px; /* 🔥 أقصى ارتفاع للمربع، مش هيكبر عنه */
-  overflow-y: auto !important; /* 🔥 إجبار ظهور السكرول الداخلي لما الكلام يكتر */
-  resize: none !important; /* منع المستخدم من تكبير المربع يدوياً عشان ميبوظش الشكل */
+  max-height: 200px;
+  overflow-y: auto !important; 
+  resize: none !important;
   width: 100%;
 }

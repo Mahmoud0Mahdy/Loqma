@@ -8,8 +8,8 @@ import {
   MessageSquare,
   Shield,
   LogOut,
-  Layers, // ✅ جديد
-  ShoppingCart // ✅ New Import
+  Layers, // Categories section
+  ShoppingCart, // Orders section
 } from "lucide-react";
 
 const navItems = [

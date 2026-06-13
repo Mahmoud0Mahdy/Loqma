@@ -46,7 +46,6 @@ export function CartPage() {
   );
 
   // ================= DELETE =================
-  // ================= DELETE =================
   const removeFromCart = useCallback(
     (itemId: number) => {
       removeItem(itemId)
@@ -60,7 +59,7 @@ export function CartPage() {
     [removeItem],
   );
 
-  // 🔥 NEW: open confirmation modal before deleting
+  // NEW: open confirmation modal before deleting
   const requestRemove = useCallback((itemId: number) => {
     setPendingRemove(itemId);
     setShowModal(true);

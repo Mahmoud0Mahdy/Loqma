@@ -53,7 +53,6 @@ export function SavedProductsPage() {
           : "Product saved to favorites"
       );
 
-      // 🔥 refresh بعد التعديل
       fetchFavorites();
 
     } catch (err) {

@@ -67,7 +67,7 @@
   grid-template-columns: 1fr;
 }
 
-/* Media queries عشان الـ Responsive design */
+/* Media queries Responsive design */
 @media (min-width: 768px) {
   .grid-layout.cols-2 {
     grid-template-columns: repeat(2, 1fr);

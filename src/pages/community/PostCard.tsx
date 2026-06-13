@@ -1,5 +1,15 @@
-import { ArrowUp, ArrowDown, MessageCircle, Bookmark, ArrowRight } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import {
+  ArrowUp,
+  ArrowDown,
+  MessageCircle,
+  Bookmark,
+  ArrowRight,
+} from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../../components/ui/avatar";
 import { Badge } from "../../components/ui/badge";
 
 export interface Post {
@@ -22,7 +32,7 @@ export interface Post {
 
 interface PostCardProps {
   post: Post;
-  disableVotes?: boolean; // لقفل زرار الـ Vote
+  disableVotes?: boolean;
   onPostClick?: (postId: string) => void;
   onVote?: (postId: string, voteType: 1 | -1) => void | Promise<void>;
   onSave?: (postId: string) => void | Promise<void>;
@@ -57,8 +67,8 @@ export function PostCard({
             disabled={disableVotes}
             onClick={() => !disableVotes && onVote?.(post.id, 1)}
             className={`p-1.5 rounded transition-colors ${
-              disableVotes 
-                ? "cursor-default opacity-50" 
+              disableVotes
+                ? "cursor-default opacity-50"
                 : "hover:bg-gray-200 cursor-pointer"
             } ${post.currentUserVote === 1 ? "text-orange-500" : "text-gray-400"}`}
           >
@@ -66,7 +76,11 @@ export function PostCard({
           </button>
           <span
             className={`text-sm font-semibold ${
-              post.upvotes > 0 ? "text-orange-600" : post.upvotes < 0 ? "text-red-500" : "text-gray-600"
+              post.upvotes > 0
+                ? "text-orange-600"
+                : post.upvotes < 0
+                  ? "text-red-500"
+                  : "text-gray-600"
             }`}
           >
             {post.upvotes}
@@ -75,8 +89,8 @@ export function PostCard({
             disabled={disableVotes}
             onClick={() => !disableVotes && onVote?.(post.id, -1)}
             className={`p-1.5 rounded transition-colors ${
-              disableVotes 
-                ? "cursor-default opacity-50" 
+              disableVotes
+                ? "cursor-default opacity-50"
                 : "hover:bg-gray-200 cursor-pointer"
             } ${post.currentUserVote === -1 ? "text-blue-500" : "text-gray-400"}`}
           >
@@ -93,7 +107,9 @@ export function PostCard({
                 <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{post.author.name}</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {post.author.name}
+                </p>
                 <p className="text-xs text-gray-500">{post.timestamp}</p>
               </div>
             </div>
@@ -117,9 +133,10 @@ export function PostCard({
             {post.title}
           </h3>
 
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">{post.content}</p>
+          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+            {post.content}
+          </p>
 
-          {/* 🔥 الصورة هنا صغيرة جداً وملمومة h-32 */}
           {post.imageUrl && (
             <div className="mb-3 rounded-lg overflow-hidden border border-gray-100">
               <img
@@ -144,15 +161,22 @@ export function PostCard({
               <button
                 onClick={() => onSave?.(post.id)}
                 className={`flex items-center gap-1 transition-colors ${
-                  post.isSaved ? "text-orange-500" : "text-gray-600 hover:text-orange-500"
+                  post.isSaved
+                    ? "text-orange-500"
+                    : "text-gray-600 hover:text-orange-500"
                 }`}
               >
-                <Bookmark size={18} fill={post.isSaved ? "currentColor" : "none"} />
-                <span className="text-sm">{post.isSaved ? "Saved" : "Save"}</span>
+                <Bookmark
+                  size={18}
+                  fill={post.isSaved ? "currentColor" : "none"}
+                />
+                <span className="text-sm">
+                  {post.isSaved ? "Saved" : "Save"}
+                </span>
               </button>
             </div>
 
-            {/* 🔥 View Post Button */}
+            {/* View Post Button */}
             <button
               onClick={() => onPostClick?.(post.id)}
               className="flex items-center gap-1.5 text-sm font-medium text-gray-700 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 px-3 py-1.5 rounded-lg transition-colors"

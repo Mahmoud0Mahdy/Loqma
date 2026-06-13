@@ -1,5 +1,5 @@
 import { Github, Mail } from 'lucide-react';
-import './footer.css'; // 🔥 استدعاء ملف التصميم
+import './footer.css';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();

@@ -1,13 +1,15 @@
-import { MessageCircle, X, Bot } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
-import { useChatbotContext } from '../../../contexts/ChatbotContext';
-import { MessageList } from './MessageList';
-import { ChatInput } from './ChatInput';
-import { useScrollToBottom } from '../hooks/useScrollToBottom';
-// 🔥 استدعاء الـ AppContext عشان نعرف اليوزر عامل لوجين ولا لأ
-import { useApp } from '../../../contexts/AppContext'; 
+import { MessageCircle, X, Bot } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
-import './floating-chatbot.css';
+import { useChatbotContext } from "../../../contexts/ChatbotContext";
+import { useApp } from "../../../contexts/AppContext";
+
+import { MessageList } from "./MessageList";
+import { ChatInput } from "./ChatInput";
+
+import { useScrollToBottom } from "../hooks/useScrollToBottom";
+
+import "./floating-chatbot.css";
 
 export function FloatingChatbot() {
   const {
@@ -18,20 +20,28 @@ export function FloatingChatbot() {
     sendMessage,
   } = useChatbotContext();
 
-  const { state } = useApp(); // 🔥 جلب حالة اليوزر
+  const { state } = useApp();
+
   const scrollRef = useScrollToBottom(messages);
+
   const location = useLocation();
 
   const lastMessage = messages[messages.length - 1];
-  const isWaitingForBot = isLoading || (lastMessage?.role === "user");
 
-  // 🔥 السحر هنا: لو اليوزر مش عامل لوجين، الويدجت هيختفي تماماً كأنه مش موجود
+  const isWaitingForBot =
+    isLoading || lastMessage?.role === "user";
+
+  // Hide chatbot if user is not authenticated
+  if (!state.isAuthenticated) {
+    return null;
+  }
+
+  // Hide chatbot on dedicated pages
   if (
-    !state.isAuthenticated || 
-    location.pathname === '/chatbot' ||
-    location.pathname === '/login' ||
-    location.pathname === '/signup' ||
-    location.pathname === '/checkout'
+    location.pathname === "/chatbot" ||
+    location.pathname === "/login" ||
+    location.pathname === "/signup" ||
+    location.pathname === "/checkout"
   ) {
     return null;
   }
@@ -40,13 +50,13 @@ export function FloatingChatbot() {
     <div className="fcb-container">
       {isFloatingOpen && (
         <div className="fcb-window">
-          
-          {/* Header */}
+          {/* Chat header */}
           <div className="fcb-header">
             <div className="fcb-header-info">
               <div className="fcb-bot-icon">
                 <Bot size={20} />
               </div>
+
               <div className="fcb-header-text">
                 <h3>Loqma AI</h3>
                 <p>Recipe Assistant</p>
@@ -63,7 +73,10 @@ export function FloatingChatbot() {
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="fcb-messages">
+          <div
+            ref={scrollRef}
+            className="fcb-messages"
+          >
             <MessageList
               messages={messages}
               isLoading={isLoading}
@@ -79,11 +92,9 @@ export function FloatingChatbot() {
               isFirstMessage={messages.length === 0}
             />
           </div>
-          
         </div>
       )}
 
-      {/* Floating Action Button (FAB) */}
       {!isFloatingOpen && (
         <button
           onClick={() => setFloatingOpen(true)}

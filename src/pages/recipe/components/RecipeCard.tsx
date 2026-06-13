@@ -16,7 +16,6 @@ interface Props {
 export function RecipeCard({ recipe, onClick }: Props) {
   const { state, dispatch } = useApp();
 
-  // ✅ الصح
   const isFavorite = state.favoriteRecipes.includes(String(recipe.id));
 
   const toggleFavorite = async (e: React.MouseEvent) => {
@@ -29,14 +28,13 @@ export function RecipeCard({ recipe, onClick }: Props) {
       return;
     }
 
-    // 👇 الحالة الجديدة
     const willBeFavorite = !isFavorite;
 
     try {
-      // 🔥 API CALL
+      // API CALL
       await toggleRecipeFavorite(recipe.id);
 
-      // 🔥 update state
+      // update state
       dispatch({
         type: "TOGGLE_RECIPE_FAVORITE",
         recipeId: String(recipe.id),

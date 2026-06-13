@@ -25,26 +25,34 @@ interface RecipeCardProps {
 export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
   const { removeRecipe, dispatch } = useApp();
 
+  // Delete the selected recipe and update the local state
   const handleDelete = async () => {
     try {
       await removeRecipe(recipe.id);
-      dispatch({ type: "DELETE_RECIPE", recipeId: recipe.id });
+
+      dispatch({
+        type: "DELETE_RECIPE",
+        recipeId: recipe.id,
+      });
+
       toast.success(`${recipe.title} has been deleted`);
     } catch (error) {
       toast.error("Failed to delete recipe");
     }
   };
 
+  // Resolve recipe image source from available fields
   const image = (recipe as any).imageUrl || recipe.image;
-  const prepTime =
-    (recipe as any).prepTime
-      ? `${(recipe as any).prepTime} min`
-      : recipe.time;
 
-  const category =
-    (recipe as any).categoryName || recipe.category;
+  // Format preparation time for display
+  const prepTime = (recipe as any).prepTime
+    ? `${(recipe as any).prepTime} min`
+    : recipe.time;
 
-  // 🔥 Difficulty Parsing
+  // Resolve category name from API or local state
+  const category = (recipe as any).categoryName || recipe.category;
+
+  // Normalize difficulty value before mapping it to a label and style
   let rawDifficulty = (
     (recipe as any).difficulty ??
     (recipe as any).difficultyLevel ??
@@ -54,49 +62,36 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
     .toLowerCase()
     .trim();
 
-  let diffBg =
-    "bg-green-100 text-green-700 hover:bg-green-200";
+  let diffBg = "bg-green-100 text-green-700 hover:bg-green-200";
+
   let diffLabel = "Easy";
 
-  if (
-    rawDifficulty === "intermediate" ||
-    rawDifficulty === "1"
-  ) {
-    diffBg =
-      "bg-blue-100 text-blue-700 hover:bg-blue-200";
+  // Map difficulty level to display label and badge color
+  if (rawDifficulty === "intermediate" || rawDifficulty === "1") {
+    diffBg = "bg-blue-100 text-blue-700 hover:bg-blue-200";
+
     diffLabel = "Intermediate";
-  } else if (
-    rawDifficulty === "medium" ||
-    rawDifficulty === "2"
-  ) {
-    diffBg =
-      "bg-orange-100 text-orange-700 hover:bg-orange-200";
+  } else if (rawDifficulty === "medium" || rawDifficulty === "2") {
+    diffBg = "bg-orange-100 text-orange-700 hover:bg-orange-200";
+
     diffLabel = "Medium";
-  } else if (
-    rawDifficulty === "advanced" ||
-    rawDifficulty === "3"
-  ) {
-    diffBg =
-      "bg-indigo-100 text-indigo-700 hover:bg-indigo-200";
+  } else if (rawDifficulty === "advanced" || rawDifficulty === "3") {
+    diffBg = "bg-indigo-100 text-indigo-700 hover:bg-indigo-200";
+
     diffLabel = "Advanced";
-  } else if (
-    rawDifficulty === "hard" ||
-    rawDifficulty === "4"
-  ) {
-    diffBg =
-      "bg-red-100 text-red-700 hover:bg-red-200";
+  } else if (rawDifficulty === "hard" || rawDifficulty === "4") {
+    diffBg = "bg-red-100 text-red-700 hover:bg-red-200";
+
     diffLabel = "Hard";
-  } else if (
-    rawDifficulty === "expert" ||
-    rawDifficulty === "5"
-  ) {
-    diffBg =
-      "bg-purple-100 text-purple-700 hover:bg-purple-200";
+  } else if (rawDifficulty === "expert" || rawDifficulty === "5") {
+    diffBg = "bg-purple-100 text-purple-700 hover:bg-purple-200";
+
     diffLabel = "Expert";
   }
 
   return (
     <Card className="overflow-hidden flex flex-col">
+      {/* Recipe image */}
       <img
         src={image}
         alt={recipe.title}
@@ -104,6 +99,7 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
       />
 
       <div className="p-4 flex flex-col flex-1">
+        {/* Recipe title */}
         <h3
           className="font-semibold text-gray-900 mb-2 line-clamp-1"
           title={recipe.title}
@@ -111,6 +107,7 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
           {recipe.title}
         </h3>
 
+        {/* Recipe metadata */}
         <div className="flex items-center gap-4 text-xs text-gray-600 mb-3">
           <div className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
@@ -123,6 +120,7 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
           </div>
         </div>
 
+        {/* Category and difficulty badges */}
         <div className="flex items-center gap-2 mb-4 mt-auto">
           <Badge
             variant="secondary"
@@ -131,14 +129,14 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
             {category}
           </Badge>
 
-          <Badge
-            className={`text-xs font-bold border-none ${diffBg}`}
-          >
+          <Badge className={`text-xs font-bold border-none ${diffBg}`}>
             {diffLabel}
           </Badge>
         </div>
 
+        {/* Recipe actions */}
         <div className="flex gap-2">
+          {/* Edit recipe button */}
           <Button
             variant="outline"
             size="sm"
@@ -149,6 +147,7 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
             Edit
           </Button>
 
+          {/* Delete recipe confirmation dialog */}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
@@ -162,20 +161,16 @@ export function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
 
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Delete Recipe
-                </AlertDialogTitle>
+                <AlertDialogTitle>Delete Recipe</AlertDialogTitle>
 
                 <AlertDialogDescription>
-                  Are you sure you want to delete{" "}
-                  {recipe.title}? This action cannot be undone.
+                  Are you sure you want to delete {recipe.title}? This action
+                  cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
 
               <AlertDialogFooter>
-                <AlertDialogCancel>
-                  Cancel
-                </AlertDialogCancel>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
 
                 <AlertDialogAction
                   onClick={handleDelete}

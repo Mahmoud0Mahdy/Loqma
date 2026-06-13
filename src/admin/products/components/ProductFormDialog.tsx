@@ -45,6 +45,7 @@ const defaultFormData = {
   inStock: true,
 };
 
+// ================= PRODUCT FORM DIALOG =================
 export function ProductFormDialog({
   isOpen,
   onClose,
@@ -58,6 +59,7 @@ export function ProductFormDialog({
 
   // ================= FETCH CATEGORIES =================
   useEffect(() => {
+    // ================= LOAD PRODUCT CATEGORIES =================
     const fetchCategories = async () => {
       try {
         const res = await getCategories(2);
@@ -70,7 +72,7 @@ export function ProductFormDialog({
     fetchCategories();
   }, []);
 
-  // ================= EDIT =================
+  // ================= LOAD EDITING PRODUCT DATA =================
   useEffect(() => {
     if (editingProduct) {
       setFormData({
@@ -81,7 +83,8 @@ export function ProductFormDialog({
         image: editingProduct.image,
         description: editingProduct.description || "",
         calories: editingProduct.nutrition?.calories?.toString() || "",
-        protein: editingProduct.nutrition?.protein?.replace(/[^0-9.]/g, "") || "",
+        protein:
+          editingProduct.nutrition?.protein?.replace(/[^0-9.]/g, "") || "",
         carbs: editingProduct.nutrition?.carbs?.replace(/[^0-9.]/g, "") || "",
         fat: editingProduct.nutrition?.fat?.replace(/[^0-9.]/g, "") || "",
         fiber: editingProduct.nutrition?.fiber?.replace(/[^0-9.]/g, "") || "",
@@ -92,6 +95,7 @@ export function ProductFormDialog({
     }
   }, [editingProduct, isOpen]);
 
+  // ================= SYNC CATEGORY ID AFTER LOADING =================
   useEffect(() => {
     if (editingProduct && categories.length > 0) {
       setFormData((prev) => ({
@@ -101,7 +105,7 @@ export function ProductFormDialog({
     }
   }, [categories, editingProduct]);
 
-  // ================= SUBMIT =================
+  // ================= HANDLE FORM SUBMISSION =================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -112,7 +116,7 @@ export function ProductFormDialog({
       return;
     }
 
-    // --- Validation for Nutrition ---
+    // ================= VALIDATE NUTRITION VALUES =================
     const nutritionFields = [
       { name: "Calories", value: formData.calories },
       { name: "Protein", value: formData.protein },
@@ -124,23 +128,25 @@ export function ProductFormDialog({
     let isAnyNutritionGreaterThanZero = false;
 
     for (const field of nutritionFields) {
-      if (field.value !== "") { 
+      if (field.value !== "") {
         const numValue = parseFloat(field.value);
+
         if (numValue > 999) {
           toast.error(`${field.name} cannot exceed 999`);
           return;
         }
+
         if (numValue < 0) {
           toast.error(`${field.name} cannot be less than 0`);
           return;
         }
+
         if (numValue > 0) {
-          isAnyNutritionGreaterThanZero = true; // لقينا على الأقل قيمة واحدة أكبر من الصفر
+          isAnyNutritionGreaterThanZero = true;
         }
       }
     }
 
-    // لو اللوب خلص ومفيش ولا قيمة أكبر من الصفر
     if (!isAnyNutritionGreaterThanZero) {
       toast.error("At least one nutrition value must be greater than 0");
       return;
@@ -165,6 +171,7 @@ export function ProductFormDialog({
     };
 
     try {
+      // ================= UPDATE EXISTING PRODUCT =================
       if (editingProduct) {
         await axiosInstance.put(`/Products/${editingProduct.id}`, payload);
 
@@ -188,6 +195,7 @@ export function ProductFormDialog({
 
         toast.success("Updated successfully");
       } else {
+        // ================= CREATE NEW PRODUCT =================
         const res = await axiosInstance.post(`/Products`, payload);
 
         dispatch({
@@ -223,6 +231,7 @@ export function ProductFormDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Dialog Header */}
         <DialogHeader>
           <DialogTitle>
             {editingProduct ? "Edit Product" : "Add New Product"}
@@ -230,7 +239,7 @@ export function ProductFormDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* NAME + PRICE */}
+          {/* Product Name & Price */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="productName">Product Name *</Label>
@@ -260,16 +269,20 @@ export function ProductFormDialog({
             </div>
           </div>
 
-          {/* CATEGORY + STOCK */}
+          {/* Category & Stock Status */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="productCategory">Category *</Label>
+
               <Select
-                value={formData.categoryId ? formData.categoryId.toString() : ""}
+                value={
+                  formData.categoryId ? formData.categoryId.toString() : ""
+                }
                 onValueChange={(value) => {
                   const selected = categories.find(
-                    (c) => c.id.toString() === value
+                    (c) => c.id.toString() === value,
                   );
+
                   setFormData({
                     ...formData,
                     category: selected?.name || "",
@@ -280,6 +293,7 @@ export function ProductFormDialog({
                 <SelectTrigger id="productCategory" aria-label="Category">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
+
                 <SelectContent>
                   {categories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id.toString()}>
@@ -297,16 +311,20 @@ export function ProductFormDialog({
                 type="checkbox"
                 checked={formData.inStock}
                 onChange={(e) =>
-                  setFormData({ ...formData, inStock: e.target.checked })
+                  setFormData({
+                    ...formData,
+                    inStock: e.target.checked,
+                  })
                 }
               />
               <Label htmlFor="inStock">In Stock</Label>
             </div>
           </div>
 
-          {/* IMAGE */}
+          {/* Product Image URL & Preview */}
           <div>
             <Label htmlFor="imageUrl">Image URL *</Label>
+
             <Input
               id="imageUrl"
               value={formData.image}
@@ -315,6 +333,8 @@ export function ProductFormDialog({
               }
               required
             />
+
+            {/* Image Preview */}
             {formData.image && (
               <img
                 alt="Product preview"
@@ -324,29 +344,35 @@ export function ProductFormDialog({
             )}
           </div>
 
-          {/* DESCRIPTION */}
+          {/* Product Description */}
           <div>
             <Label htmlFor="productDescription">Description *</Label>
+
             <Textarea
               id="productDescription"
               value={formData.description}
               onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
+                setFormData({
+                  ...formData,
+                  description: e.target.value,
+                })
               }
               required
             />
           </div>
 
-          {/* NUTRITION */}
+          {/* Nutrition Section */}
           <div className="border-t pt-4">
             <div className="flex justify-between items-center mb-3">
               <h3 className="font-medium">Nutrition</h3>
+
               <span className="text-xs text-muted-foreground">
                 Max limit per field is 999. At least one must be {">"} 0.
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
+              {/* Calories */}
               <Input
                 type="number"
                 min="0"
@@ -359,6 +385,7 @@ export function ProductFormDialog({
                 }
               />
 
+              {/* Protein */}
               <Input
                 type="number"
                 min="0"
@@ -371,6 +398,7 @@ export function ProductFormDialog({
                 }
               />
 
+              {/* Carbs */}
               <Input
                 type="number"
                 min="0"
@@ -383,6 +411,7 @@ export function ProductFormDialog({
                 }
               />
 
+              {/* Fat */}
               <Input
                 type="number"
                 min="0"
@@ -395,6 +424,7 @@ export function ProductFormDialog({
                 }
               />
 
+              {/* Fiber */}
               <Input
                 type="number"
                 min="0"
@@ -409,20 +439,22 @@ export function ProductFormDialog({
             </div>
           </div>
 
-          {/* ACTIONS */}
+          {/* Form Actions */}
           <div className="flex justify-end gap-2">
+            {/* Cancel Button */}
             <DialogClose asChild>
               <Button type="button" variant="outline">
                 Cancel
               </Button>
             </DialogClose>
 
+            {/* Submit Button */}
             <Button type="submit" disabled={loading}>
               {loading
                 ? "Loading..."
                 : editingProduct
-                ? "Update Product"
-                : "Add Product"}
+                  ? "Update Product"
+                  : "Add Product"}
             </Button>
           </div>
         </form>

@@ -42,7 +42,7 @@ export function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ✅ validation
+    // validation
     if (!loginData.email || !loginData.password) {
       toast.error("Please fill in all fields");
       return;
@@ -56,14 +56,14 @@ export function LoginPage() {
 
       const { token, refreshToken } = res;
 
-      // 🔐 save
+      // save
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
 
-      // 🧠 decode
+      // decode
       const { userId, role } = decodeToken(token);
 
-      // 📦 save in context
+      // save in context
       dispatch({
         type: "LOGIN",
         user: {
@@ -73,9 +73,9 @@ export function LoginPage() {
         },
       });
 
-      toast.success("Login successful 🎉", { duration: 1500 });
+      toast.success("Login successful ", { duration: 1500 });
 
-      // 🚀 redirect
+      //  redirect
       setTimeout(() => {
         if (role === "Admin") {
           navigate("/admin");
@@ -142,7 +142,7 @@ export function LoginPage() {
         confirmPassword: signupData.confirmPassword,
       });
 
-      toast.success("Account created successfully 🎉", {
+      toast.success("Account created successfully ", {
         duration: 1000,
       });
 

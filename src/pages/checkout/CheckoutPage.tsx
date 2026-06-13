@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Navigate, useLocation } from "react-router-dom";
+import {
+  useNavigate,
+  Navigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 
 import { Button } from "../../components/ui/button";
 
@@ -33,6 +38,11 @@ export function CheckoutPage() {
   const navigate = useNavigate();
 
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  const resumeOrderId = searchParams.get("resumeOrder");
+
+  const isResumePayment = !!resumeOrderId;
 
   const { cart, loading, fetchCart, fetchSummary } = useCart();
 
@@ -93,8 +103,17 @@ export function CheckoutPage() {
       requestId: crypto.randomUUID(),
     });
   }, [source, quickProduct, quickQuantity]);
+  useEffect(() => {
+    if (!resumeOrderId) return;
 
-  // 🔥 cart items
+    setCheckoutField("orderId", Number(resumeOrderId));
+
+    sessionStorage.setItem(CHECKOUT_STEP_STORAGE_KEY, "3");
+
+    setStep(3);
+  }, [resumeOrderId]);
+
+  // cart items
   const cartItems = quickProduct
     ? [
         {
@@ -104,7 +123,7 @@ export function CheckoutPage() {
       ]
     : cart || [];
 
-  // 🔥 form state
+  // form state
   const [formData, setFormData] = useState(() => {
     const saved = sessionStorage.getItem(CHECKOUT_FORM_STORAGE_KEY);
 
@@ -142,7 +161,7 @@ export function CheckoutPage() {
     sessionStorage.setItem(CHECKOUT_FORM_STORAGE_KEY, JSON.stringify(safeData));
   }, [formData]);
 
-  // 🔥 prefill profile
+  // prefill profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -169,7 +188,7 @@ export function CheckoutPage() {
     fetchProfile();
   }, []);
 
-  // 🔥 totals
+  // totals
   const subtotal = (cartItems || []).reduce((total, item: any) => {
     const price = Number(item.product?.price ?? item.price ?? 0);
 
@@ -183,7 +202,7 @@ export function CheckoutPage() {
 
   const total = subtotal + tax + shipping;
 
-  // 🔥 update form + context
+  // update form + context
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({
       ...prev,
@@ -193,7 +212,7 @@ export function CheckoutPage() {
     setCheckoutField(field, value);
   };
 
-  // 🔥 shipping validation
+  // shipping validation
   const validateShippingStep = () => {
     return (
       formData.fullName &&
@@ -205,7 +224,7 @@ export function CheckoutPage() {
     );
   };
 
-  // 🔥 payment validation
+  // payment validation
   const validatePaymentStep = () => {
     return (
       formData.cardNumber &&
@@ -215,7 +234,7 @@ export function CheckoutPage() {
     );
   };
 
-  // 🔥 STEP 1 -> STEP 2
+  // STEP 1 -> STEP 2
   const nextShippingStep = () => {
     if (validateShippingStep()) {
       setStep(2);
@@ -224,11 +243,36 @@ export function CheckoutPage() {
     }
   };
 
-  // 🔥 PLACE ORDER
+  // PLACE ORDER
+  // PLACE ORDER
   const placeOrder = async () => {
     try {
       setPlacingOrder(true);
 
+      // =========================
+      // ORDER ALREADY EXISTS
+      // =========================
+      if (checkoutData.orderId) {
+        toast.success("Payment completed successfully!");
+
+        resetCheckout();
+
+        sessionStorage.removeItem(CHECKOUT_STEP_STORAGE_KEY);
+
+        sessionStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY);
+
+        sessionStorage.removeItem(CHECKOUT_PRODUCT_STORAGE_KEY);
+
+        sessionStorage.removeItem(CHECKOUT_QUANTITY_STORAGE_KEY);
+
+        navigate("/orders");
+
+        return;
+      }
+
+      // =========================
+      // CREATE NEW ORDER
+      // =========================
       const payload = {
         address: `${formData.address}, ${formData.city}, ${formData.state}, ${formData.zipCode}`,
 
@@ -247,7 +291,6 @@ export function CheckoutPage() {
 
       await placeOrderApi(payload);
 
-      // 🔥 refresh cart instantly
       await fetchCart();
 
       await fetchSummary();
@@ -255,6 +298,7 @@ export function CheckoutPage() {
       toast.success("Order placed successfully!");
 
       resetCheckout();
+
       sessionStorage.removeItem(CHECKOUT_STEP_STORAGE_KEY);
 
       sessionStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY);
@@ -273,7 +317,7 @@ export function CheckoutPage() {
     }
   };
 
-  // 🔥 protection
+  // protection
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -282,11 +326,11 @@ export function CheckoutPage() {
     );
   }
 
-  if (!quickProduct && (!cart || cart.length === 0)) {
+  if (!isResumePayment && !quickProduct && (!cart || cart.length === 0)) {
     return <Navigate to="/cart" replace />;
   }
 
-  // 🔥 loading
+  // loading
   if (loadingProfile) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -301,7 +345,11 @@ export function CheckoutPage() {
         {/* BACK */}
         <Button
           variant="ghost"
-          onClick={() => navigate("/cart")}
+          onClick={() =>
+            isResumePayment
+              ? navigate(`/orders/${resumeOrderId}`)
+              : navigate("/cart")
+          }
           className="mb-6"
         >
           <ArrowLeft className="mr-2" size={16} />
@@ -309,7 +357,9 @@ export function CheckoutPage() {
         </Button>
 
         {/* TITLE */}
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          {isResumePayment ? `Complete Payment #${resumeOrderId}` : "Checkout"}
+        </h1>
 
         {/* STEPS */}
         <CheckoutSteps step={step} />

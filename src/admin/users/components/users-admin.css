@@ -1,9 +1,4 @@
-/* ============================================================
-   users-admin.css
-   Styles for: UserStats, UserTable
-   ============================================================ */
-
-/* ── UserStats wrapper ────────────────────────────────────── */
+/* User statistics section */
 .us-stats-wrapper {
   display: flex;
   flex-direction: column;
@@ -11,7 +6,7 @@
   margin-bottom: 24px;
 }
 
-/* ── Total Users card (top, full width) ───────────────────── */
+/* Main card showing total users */
 .us-total-card {
   display: flex;
   flex-direction: column;
@@ -20,7 +15,7 @@
   padding: 20px 16px;
   gap: 6px;
   border-radius: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   background: #ffffff;
 }
 
@@ -28,7 +23,7 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #dbeafe; /* أزرق فاتح */
+  background: #dbeafe;
   color: #2563eb;
   display: flex;
   align-items: center;
@@ -37,26 +32,26 @@
 }
 
 .us-total-label {
-  color: #6b7280; 
-  font-size: 14px; 
-  font-weight: 650; 
-  text-transform: uppercase; 
-  letter-spacing: 0.05em; 
-  margin-bottom: 4px; 
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
 }
 
 .us-total-value {
   font-size: 36px;
   font-weight: 500;
-  color: #000000; 
-  line-height: 1; 
-  text-align: center; 
+  color: #000000;
+  line-height: 1;
+  text-align: center;
 }
 
-/* ── Mini status cards grid (bottom row) ──────────────────── */
+/* Cards showing active and inactive users */
 .us-mini-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* كارتين بس: نشط وغير نشط */
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
@@ -69,13 +64,13 @@
   gap: 8px;
   border-radius: 14px;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.18s ease;
   background: #ffffff;
 }
 
-.us-mini-card:hover { 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.09); 
+.us-mini-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
 }
 
 .us-mini-icon {
@@ -87,37 +82,45 @@
   justify-content: center;
 }
 
-/* ألوان الأيقونات */
-.us-mini-icon--green  { background: #f0fdf4; color: #16a34a; }
-.us-mini-icon--red    { background: #fef2f2; color: #dc2626; }
-
-/* ألوان الأرقام */
-.us-mini-value {
-  font-size: 24px; 
-  font-weight: 700; 
-  line-height: 1; 
-  margin-bottom: 4px; 
+.us-mini-icon--green {
+  background: #f0fdf4;
+  color: #16a34a;
 }
 
-.us-mini-value--green  { color: #16a34a; }
-.us-mini-value--red    { color: #dc2626; }
+.us-mini-icon--red {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.us-mini-value {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.us-mini-value--green {
+  color: #16a34a;
+}
+
+.us-mini-value--red {
+  color: #dc2626;
+}
 
 .us-mini-label {
-  color: #6b7280; 
-  font-size: 11px; 
-  font-weight: 700; 
-  text-transform: uppercase; 
-  letter-spacing: 0.05em; 
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* ══════════════════════════════════════════════════════════
-   User Table
-   ══════════════════════════════════════════════════════════ */
+/* Users table container */
 .ua-table-wrap {
   overflow: hidden;
   border-radius: 14px;
   border: 1px solid #f3f4f6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   background: #ffffff;
 }
 
@@ -128,7 +131,6 @@
   text-align: left;
 }
 
-/* Header */
 .ua-table thead {
   background: #f9fafb;
   border-bottom: 1px solid #f3f4f6;
@@ -144,14 +146,18 @@
   white-space: nowrap;
 }
 
-/* Body */
 .ua-table tbody tr {
   border-bottom: 1px solid #f9fafb;
   transition: background 0.12s ease;
 }
 
-.ua-table tbody tr:last-child { border-bottom: none; }
-.ua-table tbody tr:hover      { background: #f9fafb; }
+.ua-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.ua-table tbody tr:hover {
+  background: #f9fafb;
+}
 
 .ua-table td {
   padding: 12px 16px;
@@ -159,7 +165,7 @@
   color: #374151;
 }
 
-/* User Cell */
+/* User information inside the first column */
 .ua-user {
   display: flex;
   align-items: center;

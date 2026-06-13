@@ -11,7 +11,7 @@ export const useRecipeDetail = (recipeId: string | undefined) => {
 
   const [recipe, setRecipe] = useState<any>(null);
 
-  // 🔥 fetch recipe details
+  // fetch recipe details
   useEffect(() => {
     if (!recipeId) return;
 
@@ -40,7 +40,7 @@ export const useRecipeDetail = (recipeId: string | undefined) => {
     fetchRecipe();
   }, [recipeId]);
 
-  // ✅ new favorites system
+  // new favorites system
   const isFavorite = useMemo(() => {
     if (!recipe) return false;
     return state.favoriteRecipes.includes(String(recipe.id));
@@ -65,7 +65,7 @@ export const useRecipeDetail = (recipeId: string | undefined) => {
     toast.success(`Added ${matchingProducts.length} items to cart!`);
   };
 
-  // 🔥 FIXED FAVORITE TOGGLE
+  // FIXED FAVORITE TOGGLE
   const toggleSaveRecipe = async () => {
     if (!state.isAuthenticated) {
       toast.error("Please log in to save recipes");

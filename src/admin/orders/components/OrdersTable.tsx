@@ -3,8 +3,8 @@ import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
 import { Eye } from "lucide-react";
 import { OrderStatusDropdown } from "./OrderStatusDropdown";
-import { OrderStatus } from "../../../api/adminApi"; 
-import "../components/orders-admin.css"; // مسار الـ css
+import { OrderStatus } from "../../../api/adminApi";
+import "../components/orders-admin.css";
 
 interface OrdersTableProps {
   orders: any[];
@@ -12,15 +12,39 @@ interface OrdersTableProps {
   onViewDetails: (order: any) => void;
 }
 
-export function OrdersTable({ orders, onRefresh, onViewDetails }: OrdersTableProps) {
+export function OrdersTable({
+  orders,
+  onRefresh,
+  onViewDetails,
+}: OrdersTableProps) {
+  // Return badge based on order status
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
-      case OrderStatus.Pending: return <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-200">Pending</Badge>;
-      case OrderStatus.Confirmed: return <Badge className="bg-blue-500 hover:bg-blue-600">Confirmed</Badge>;
-      case OrderStatus.Shipped: return <Badge className="bg-purple-500 hover:bg-purple-600">Shipped</Badge>;
-      case OrderStatus.Delivered: return <Badge className="bg-green-500 hover:bg-green-600">Delivered</Badge>;
-      case OrderStatus.Cancelled: return <Badge variant="destructive">Cancelled</Badge>;
-      default: return <Badge variant="secondary">Unknown</Badge>;
+      case OrderStatus.Pending:
+        return (
+          <Badge
+            variant="outline"
+            className="bg-orange-50 text-orange-600 border-orange-200"
+          >
+            Pending
+          </Badge>
+        );
+      case OrderStatus.Confirmed:
+        return (
+          <Badge className="bg-blue-500 hover:bg-blue-600">Confirmed</Badge>
+        );
+      case OrderStatus.Shipped:
+        return (
+          <Badge className="bg-purple-500 hover:bg-purple-600">Shipped</Badge>
+        );
+      case OrderStatus.Delivered:
+        return (
+          <Badge className="bg-green-500 hover:bg-green-600">Delivered</Badge>
+        );
+      case OrderStatus.Cancelled:
+        return <Badge variant="destructive">Cancelled</Badge>;
+      default:
+        return <Badge variant="secondary">Unknown</Badge>;
     }
   };
 
@@ -42,7 +66,7 @@ export function OrdersTable({ orders, onRefresh, onViewDetails }: OrdersTablePro
             {orders.map((order) => (
               <tr key={order.id}>
                 <td className="ot-id">
-                  #{order.id?.toString().padStart(5, '0') || 'N/A'}
+                  #{order.id?.toString().padStart(5, "0") || "N/A"}
                 </td>
                 <td>
                   <div className="ot-user-cell">
@@ -52,26 +76,34 @@ export function OrdersTable({ orders, onRefresh, onViewDetails }: OrdersTablePro
                       </span>
                     </div>
                     <div>
-                      <p className="ot-user-name">{order.userName || "Guest"}</p>
-                      <p className="ot-user-date">{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "-"}</p>
+                      <p className="ot-user-name">
+                        {order.userName || "Guest"}
+                      </p>
+                      <p className="ot-user-date">
+                        {order.createdAt
+                          ? new Date(order.createdAt).toLocaleDateString()
+                          : "-"}
+                      </p>
                     </div>
                   </div>
                 </td>
                 <td className="ot-total">
                   ${Number(order.safeTotal || 0).toFixed(2)}
                 </td>
+                <td>{getStatusBadge(order.safeStatus)}</td>
                 <td>
-                  {getStatusBadge(order.safeStatus)}
-                </td>
-                <td>
-                  <OrderStatusDropdown 
-                    orderId={order.id} 
-                    currentStatus={order.safeStatus} 
-                    onStatusUpdated={onRefresh} 
+                  <OrderStatusDropdown
+                    orderId={order.id}
+                    currentStatus={order.safeStatus}
+                    onStatusUpdated={onRefresh}
                   />
                 </td>
                 <td className="ot-actions">
-                  <Button variant="ghost" size="sm" onClick={() => onViewDetails(order)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onViewDetails(order)}
+                  >
                     <Eye className="w-4 h-4 mr-2" /> View
                   </Button>
                 </td>

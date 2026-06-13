@@ -8,7 +8,7 @@ import { type Product } from "../../contexts/AppContext";
 
 import { useCart } from "../../contexts/CartContext";
 
-import { useCheckout } from "../../contexts/CheckoutContext"; // 🔥 جديد
+import { useCheckout } from "../../contexts/CheckoutContext"; 
 
 import { toast } from "sonner";
 
@@ -24,7 +24,6 @@ interface ProductInfoProps {
 export default function ProductInfo({ product }: ProductInfoProps) {
   const { addToCart } = useCart();
 
-  // 🔥 جديد
   const { resetCheckout, setCheckoutData } = useCheckout();
 
   const navigate = useNavigate();
@@ -36,7 +35,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
   const { isFavorite, toggleSaveProduct } = useProductFavorite(product);
 
-  // 🔥 Add To Cart
+  // Add To Cart
   const handleAddToCart = useCallback(() => {
     if (!state.isAuthenticated) {
       toast.error("Please login first to add products to your cart");
@@ -61,7 +60,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     setOpenCart(true);
   }, [addToCart, product, quantity, navigate, state.isAuthenticated]);
 
-  // 🔥 Buy Now
+  // Buy Now
   const handleBuyNow = useCallback(() => {
     if (!state.isAuthenticated) {
       toast.error("Please login first to continue checkout");

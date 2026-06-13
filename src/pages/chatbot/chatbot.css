@@ -5,7 +5,6 @@
 /* ── Main Layout ───────────────────────────────────────── */
 .cb-wrapper {
   display: flex;
-  /* بنطرح ارتفاع الهيدر الأساسي بتاع الموقع عشان الشات يملى الشاشة بالضبط */
   height: calc(100vh - 96px); 
   background-color: #ffffff;
   overflow: hidden;
@@ -335,8 +334,8 @@
   gap: 12px;
   font-size: 14px;
   font-weight: 500;
-  width: 170px; /* تحديد عرض ثابت عشان القص والأنيميشن يشتغلوا صح */
-  overflow: hidden; /* إخفاء أي كلام بيخرج بره */
+  width: 170px; 
+  overflow: hidden; 
   position: relative;
 }
 
@@ -346,19 +345,16 @@
   transition: transform 0.3s ease;
 }
 
-/* في العادي بنعمل نقط (...) لو النص طويل */
 .cb-history-item:not(:hover) .cb-history-title-wrap {
   text-overflow: ellipsis;
   overflow: hidden;
   width: 100%;
 }
 
-/* لما نقف بالماوس، بنلغي النقط ونشغل الأنيميشن يروح يمين وشمال */
 .cb-history-item:hover .cb-history-title-wrap {
   animation: marquee-pan 4s ease-in-out infinite alternate;
 }
 
-/* الحسبة دي بتخلي النص يتحرك على قد طوله بالظبط ويرجع تاني */
 @keyframes marquee-pan {
   0%, 15% { transform: translateX(0); }
   85%, 100% { transform: translateX(calc(-100% + 140px)); }
@@ -367,10 +363,9 @@
 /* ── Input Actions & Expansion ─────────────────────────── */
 .cb-input-box {
   display: flex;
-  align-items: flex-end; /* عشان الزراير تفضل تحت لما المربع يكبر */
+  align-items: flex-end; 
 }
 
-/* الكلاس ده بيشتغل لما اليوزر يدوس على زرار التكبير */
 .cb-textarea.expanded {
   height: 250px !important;
   max-height: 400px;
@@ -392,7 +387,6 @@
   white-space: nowrap;
 }
 
-/* لما يقرب يخلص الحروف العداد بيحمر */
 .cb-char-counter.near-limit {
   color: #ef4444;
 }

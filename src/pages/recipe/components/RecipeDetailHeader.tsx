@@ -8,10 +8,8 @@ export function RecipeDetailHeader({ recipe }: { recipe: Recipe }) {
   return (
     <div className="space-y-6">
       
-      {/* خلينا الـ Card من غير padding عشان الصورة تاخد مساحتها صح */}
       <Card className="overflow-hidden border-0 shadow-sm rounded-2xl p-0">
         
-        {/* 👇 السر هنا: استخدمنا style مباشر زي اللي إنت عملته بالظبط */}
         <div 
           className="relative w-full overflow-hidden" 
           style={{ height: "420px" }} 

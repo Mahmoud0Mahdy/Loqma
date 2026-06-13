@@ -80,10 +80,10 @@ const {
         savedCardId,
       });
 
-      // 🔥 pay using saved card
+      // pay using saved card
 await payWithSavedCard(checkoutData.orderId || 0, savedCardId);
 
-// 🔥 المستخدم اختار Saved Card
+// Saved Card
 setCheckoutField("usedSavedCard", true);
 
 toast.success("Payment completed successfully");
@@ -139,12 +139,12 @@ setStep(5);
               </div>
 
               <div>
-                {/* 🔥 LAST 4 */}
+                {/* LAST 4 */}
                 <h3 className="font-semibold">
                   {card.brand} •••• {card.last4Digits}
                 </h3>
 
-                {/* 🔥 EXPIRY */}
+                {/* EXPIRY */}
                 <p className="text-sm text-gray-500">
                   Expires {card.expiryMonth}/{card.expiryYear}
                 </p>

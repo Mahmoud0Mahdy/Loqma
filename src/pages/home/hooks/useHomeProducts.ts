@@ -15,7 +15,7 @@ export const useHomeProducts = () => {
         price: item.price,
         category: item.categoryName,
         categoryId: item.categoryId,
-        imageUrl: item.imageUrl, // 👈 مصدر واحد فقط
+        imageUrl: item.imageUrl, 
         description: item.description,
         nutrition: {
           calories: item.nutritionFact?.calories || 0,

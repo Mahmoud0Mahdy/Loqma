@@ -19,7 +19,7 @@ export const OrderSummary = memo(function OrderSummary({
   proceedToCheckout,
 }: Props) {
   const { cartSummary } = useCart();
-  const navigate = useNavigate(); // 🔥
+  const navigate = useNavigate(); 
 
   const s = Number(cartSummary?.subtotal) || 0;
   const t = Number(cartSummary?.tax) || 0;

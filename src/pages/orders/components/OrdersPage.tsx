@@ -66,7 +66,7 @@ export function OrdersPage() {
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = filteredOrders.slice(
     indexOfFirstOrder,
-    indexOfLastOrder
+    indexOfLastOrder,
   );
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 

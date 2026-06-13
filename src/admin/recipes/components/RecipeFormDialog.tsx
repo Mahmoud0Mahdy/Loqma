@@ -6,7 +6,7 @@ import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
 import { getCategories } from "../../../api/adminApi";
-import { getRecipeById } from "../../../api/recipeApi"; // 🔥 الجديد
+import { getRecipeById } from "../../../api/recipeApi";
 
 import {
   Select,
@@ -70,7 +70,7 @@ export function RecipeFormDialog({
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
 
-  // ================= LOAD CATEGORIES =================
+  // Load recipe categories when the dialog opens
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -82,10 +82,12 @@ export function RecipeFormDialog({
       }
     };
 
-    if (isOpen) fetchCategories();
+    if (isOpen) {
+      fetchCategories();
+    }
   }, [isOpen]);
 
-  // ================= LOAD EDIT DATA (🔥 FIXED) =================
+  // Load recipe details when editing an existing recipe
   useEffect(() => {
     const fetchRecipe = async () => {
       if (!editingRecipe) {
@@ -94,7 +96,7 @@ export function RecipeFormDialog({
       }
 
       try {
-        const data = await getRecipeById(editingRecipe.id); // 🔥 هنا الحل
+        const data = await getRecipeById(editingRecipe.id);
 
         const matchedCategory = categories.find(
           (c) => c.name.toLowerCase() === data.categoryName?.toLowerCase(),
@@ -125,7 +127,7 @@ export function RecipeFormDialog({
     }
   }, [editingRecipe, isOpen, categories]);
 
-  // ================= SUBMIT =================
+  // Create a new recipe or update an existing one
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -157,7 +159,7 @@ export function RecipeFormDialog({
           .split("\n")
           .filter((i) => i.trim())
           .map((step) => ({
-            step: step,
+            step,
           })),
       };
 
@@ -170,7 +172,6 @@ export function RecipeFormDialog({
       }
 
       await onSuccess();
-
       onClose();
     } catch (error: any) {
       console.error(error);
@@ -180,10 +181,10 @@ export function RecipeFormDialog({
     }
   };
 
-  // ================= UI =================
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Dialog header */}
         <DialogHeader>
           <DialogTitle>
             {editingRecipe ? "Edit Recipe" : "Add New Recipe"}
@@ -191,27 +192,37 @@ export function RecipeFormDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Recipe title */}
           <div>
             <Label>Recipe Title *</Label>
             <Input
               value={formData.title}
               onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
+                setFormData({
+                  ...formData,
+                  title: e.target.value,
+                })
               }
               required
             />
           </div>
 
+          {/* Recipe image URL */}
           <div>
             <Label>Image URL *</Label>
+
             <Input
               placeholder="https://example.com/image.jpg"
               value={formData.image}
               onChange={(e) =>
-                setFormData({ ...formData, image: e.target.value })
+                setFormData({
+                  ...formData,
+                  image: e.target.value,
+                })
               }
             />
 
+            {/* Image preview */}
             {formData.image && (
               <img
                 src={formData.image}
@@ -225,15 +236,20 @@ export function RecipeFormDialog({
             )}
           </div>
 
+          {/* Cooking time and servings */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Cooking Time *</Label>
+
               <Input
                 type="number"
                 min="1"
                 value={formData.time}
                 onChange={(e) =>
-                  setFormData({ ...formData, time: e.target.value })
+                  setFormData({
+                    ...formData,
+                    time: e.target.value,
+                  })
                 }
                 required
               />
@@ -241,25 +257,35 @@ export function RecipeFormDialog({
 
             <div>
               <Label>Servings *</Label>
+
               <Input
                 type="number"
                 min="1"
                 value={formData.servings}
                 onChange={(e) =>
-                  setFormData({ ...formData, servings: e.target.value })
+                  setFormData({
+                    ...formData,
+                    servings: e.target.value,
+                  })
                 }
                 required
               />
             </div>
           </div>
 
+          {/* Category and difficulty selection */}
           <div className="grid grid-cols-2 gap-4">
+            {/* Category selector */}
             <div>
               <Label>Category *</Label>
+
               <Select
                 value={formData.category}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, category: value })
+                  setFormData({
+                    ...formData,
+                    category: value,
+                  })
                 }
               >
                 <SelectTrigger>
@@ -276,12 +302,17 @@ export function RecipeFormDialog({
               </Select>
             </div>
 
+            {/* Difficulty selector */}
             <div>
               <Label>Difficulty *</Label>
+
               <Select
                 value={formData.difficulty}
                 onValueChange={(value: any) =>
-                  setFormData({ ...formData, difficulty: value })
+                  setFormData({
+                    ...formData,
+                    difficulty: value,
+                  })
                 }
               >
                 <SelectTrigger>
@@ -299,35 +330,48 @@ export function RecipeFormDialog({
             </div>
           </div>
 
+          {/* Ingredients list */}
           <div>
             <Label>Ingredients *</Label>
+
             <Textarea
               value={formData.ingredients}
               onChange={(e) =>
-                setFormData({ ...formData, ingredients: e.target.value })
+                setFormData({
+                  ...formData,
+                  ingredients: e.target.value,
+                })
               }
               rows={4}
               required
             />
           </div>
 
+          {/* Instructions list */}
           <div>
             <Label>Instructions *</Label>
+
             <Textarea
               value={formData.instructions}
               onChange={(e) =>
-                setFormData({ ...formData, instructions: e.target.value })
+                setFormData({
+                  ...formData,
+                  instructions: e.target.value,
+                })
               }
               rows={4}
               required
             />
           </div>
 
+          {/* Form actions */}
           <div className="flex gap-2 justify-end pt-4">
+            {/* Close dialog */}
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
 
+            {/* Submit form */}
             <Button
               disabled={loading}
               className="bg-green-600 hover:bg-green-700"

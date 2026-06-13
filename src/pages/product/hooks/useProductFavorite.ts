@@ -23,7 +23,7 @@ export const useProductFavorite = (product: Product) => {
     const willBeFavorite = !isFavorite;
 
     try {
-      // 🔥 API CALL
+      // API CALL
       await toggleProductFavorite(productId);
 
       dispatch({

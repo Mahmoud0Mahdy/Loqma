@@ -29,7 +29,7 @@ export interface CheckoutData {
 
   orderId?: number;
 
-  // 🔥 NEW
+  // NEW
   usedSavedCard?: boolean;
 }
 

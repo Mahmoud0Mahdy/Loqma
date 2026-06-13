@@ -11,7 +11,6 @@ import {
 } from "./ui/dropdown-menu";
 import { toast } from "sonner";
 
-// 🔥 استيراد ملف الستايل الجديد
 import "./header.css";
 
 const navItems = [
@@ -31,7 +30,6 @@ export function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  // المسارات اللي محتاجة تسجيل دخول
   const protectedRoutes = ["/ghost-craft", "/community", "/orders", "/chatbot"];
 
   const requireLogin = (path: string) => {

@@ -1,9 +1,4 @@
-/* ============================================================
-   dashboard-admin.css
-   Styles for: DashboardStats, DashboardDetails
-   ============================================================ */
-
-/* ── Stats Grid (Top 4 Cards) ────────────────────────────── */
+/* Dashboard statistics cards */
 .da-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -12,10 +7,15 @@
 }
 
 @media (max-width: 1024px) {
-  .da-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .da-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
+
 @media (max-width: 640px) {
-  .da-stats-grid { grid-template-columns: repeat(1, 1fr); }
+  .da-stats-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .da-stat-card {
@@ -27,14 +27,14 @@
   gap: 8px;
   border-radius: 14px;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.18s ease;
   background: #ffffff;
   border: 1px solid #f3f4f6;
 }
 
 .da-stat-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.09);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
 }
 
 .da-stat-icon {
@@ -47,10 +47,25 @@
   margin-bottom: 4px;
 }
 
-.da-icon--blue   { background: #eff6ff; color: #3b82f6; }
-.da-icon--green  { background: #f0fdf4; color: #16a34a; }
-.da-icon--orange { background: #fff7ed; color: #ea580c; }
-.da-icon--purple { background: #faf5ff; color: #a855f7; }
+.da-icon--blue {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.da-icon--green {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.da-icon--orange {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.da-icon--purple {
+  background: #faf5ff;
+  color: #a855f7;
+}
 
 .da-stat-value {
   font-size: 32px;
@@ -67,7 +82,7 @@
   color: #6b7280;
 }
 
-/* ── Details Grid (Bottom 3 Cards) ───────────────────────── */
+/* Dashboard details section */
 .da-details-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -75,7 +90,9 @@
 }
 
 @media (max-width: 1024px) {
-  .da-details-grid { grid-template-columns: repeat(1, 1fr); }
+  .da-details-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .da-card-header {
@@ -88,6 +105,7 @@
   margin-bottom: 24px;
 }
 
+/* Progress indicators */
 .da-progress-wrap {
   margin-bottom: 20px;
 }

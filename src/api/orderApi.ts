@@ -1,59 +1,31 @@
 import axiosInstance from "./axiosInstance";
 
-import {
-  PlaceOrderPayload,
-} from "../pages/orders/types/orderTypes";
+import { PlaceOrderPayload } from "../pages/orders/types/orderTypes";
 
-// 🔥 PLACE ORDER
-export const placeOrder = async (
-  payload: PlaceOrderPayload
-) => {
-
-  const response =
-    await axiosInstance.post(
-      "/Order/place",
-      payload
-    );
+// Create a new order
+export const placeOrder = async (payload: PlaceOrderPayload) => {
+  const response = await axiosInstance.post("/Order/place", payload);
 
   return response.data;
 };
 
-// 🔥 GET ALL ORDERS
-export const getOrders =
-  async () => {
+// Get all orders
+export const getOrders = async () => {
+  const response = await axiosInstance.get("/Order");
 
-    const response =
-      await axiosInstance.get(
-        "/Order"
-      );
+  return response.data;
+};
 
-    return response.data;
-  };
+// Get order details
+export const getOrderDetails = async (id: number) => {
+  const response = await axiosInstance.get(`/Order/${id}`);
 
-// 🔥 GET ORDER DETAILS
-export const getOrderDetails =
-  async (
-    id: number
-  ) => {
+  return response.data;
+};
 
-    const response =
-      await axiosInstance.get(
-        `/Order/${id}`
-      );
+// Cancel an order
+export const cancelOrder = async (id: number) => {
+  const response = await axiosInstance.post(`/Order/${id}/cancel`);
 
-    return response.data;
-  };
-
-// 🔥 CANCEL ORDER
-export const cancelOrder =
-  async (
-    id: number
-  ) => {
-
-    const response =
-      await axiosInstance.post(
-        `/Order/${id}/cancel`
-      );
-
-    return response.data;
-  };
+  return response.data;
+};

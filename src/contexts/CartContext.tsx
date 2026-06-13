@@ -20,14 +20,14 @@ import {
 
 export interface CartItem {
   cartItemId: number;
-  // 🔥 NEW API FIELDS
+  // NEW API FIELDS
   productId?: number | null;
   ghostCraftOrderId?: number | null;
   name?: string;
   imageUrl?: string | null;
   price?: number;
   total?: number;
-  // 🔥 OLD PRODUCT FORMAT
+  // OLD PRODUCT FORMAT
   product?: {
     id: string;
     name: string;
@@ -212,7 +212,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [fetchCart, fetchSummary],
   );
 
-  // ================= INIT (الصحيح هنا جوه الـ Provider) =================
+  // ================= INIT =================
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {

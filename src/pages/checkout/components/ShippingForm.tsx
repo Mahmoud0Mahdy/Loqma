@@ -43,31 +43,33 @@ export function ShippingForm({
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const requiredFields = useMemo(
-    () => ["fullName", "email", "address", "city", "state", "zipCode"],
-    []
-  );
+const requiredFields = useMemo(
+  () => ["phone", "address", "city", "state", "zipCode"],
+  [],
+);
 
   const handleChange = useCallback(
     (field: string, rawValue: string) => {
       let value = rawValue;
 
-      switch (field) {
-        case "fullName":
-        case "city":
-        case "state":
-          value = value.replace(/[^A-Za-z\s]/g, "").slice(0, 50);
-          break;
-        case "phone":
-          value = value.replace(/[^\d+()\-\s]/g, "").slice(0, 20);
-          break;
-        case "zipCode":
-          value = value.replace(/\D/g, "").slice(0, 10);
-          break;
-        case "address":
-          value = value.slice(0, 100);
-          break;
-      }
+switch (field) {
+  case "city":
+  case "state":
+    value = value.replace(/[^A-Za-z\s]/g, "").slice(0, 20);
+    break;
+
+  case "phone":
+    value = value.replace(/[^\d+()\-\s]/g, "").slice(0, 15);
+    break;
+
+  case "zipCode":
+    value = value.replace(/\D/g, "").slice(0, 5);
+    break;
+
+  case "address":
+    value = value.slice(0, 100);
+    break;
+}
 
       handleInputChange(field, value);
 
@@ -79,7 +81,7 @@ export function ShippingForm({
         }));
       }
     },
-    [handleInputChange, touched]
+    [handleInputChange, touched],
   );
 
   const handleBlur = useCallback(
@@ -88,17 +90,17 @@ export function ShippingForm({
       const valid = validateField(field, formData[field] || "");
       setErrors((prev) => ({ ...prev, [field]: !valid }));
     },
-    [formData]
+    [formData],
   );
 
   const fieldError = useCallback(
     (f: string) => touched[f] && errors[f],
-    [touched, errors]
+    [touched, errors],
   );
 
   const fieldValid = useCallback(
     (f: string) => touched[f] && !errors[f] && !!formData[f],
-    [touched, errors, formData]
+    [touched, errors, formData],
   );
 
   // Updated to return standard CSS classes
@@ -109,12 +111,16 @@ export function ShippingForm({
       }
       return "form-input valid";
     },
-    [fieldError]
+    [fieldError],
   );
 
-  const disableContinue = useMemo(() => {
-    return requiredFields.some((field) => !formData[field] || errors[field]);
-  }, [requiredFields, formData, errors]);
+const disableContinue = useMemo(() => {
+  return requiredFields.some(
+    (field) =>
+      !formData[field] ||
+      !validateField(field, String(formData[field]))
+  );
+}, [requiredFields, formData]);
 
   const handleContinue = useCallback(() => {
     const fullAddress = `${formData.address || ""}, ${formData.city || ""}, ${
@@ -276,7 +282,8 @@ export function ShippingForm({
               <div className="delivery-details">
                 <span className="delivery-title">Express Delivery</span>
                 <span className="delivery-subtitle">
-                  1-2 business days — <span className="price-badge">$12.99</span>
+                  1-2 business days —{" "}
+                  <span className="price-badge">$12.99</span>
                 </span>
               </div>
             </label>

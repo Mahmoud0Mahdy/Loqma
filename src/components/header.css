@@ -1,8 +1,7 @@
 /* ============================================================
-   header.css
+   Header Layout
    ============================================================ */
 
-/* ── Wrapper & Container ───────────────────────────────── */
 .header-wrapper {
   background-color: #ffffff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -18,38 +17,41 @@
   padding: 0 16px;
 }
 
-/* ── Inner Layout ──────────────────────────────────────── */
+/* Main header content */
+
 .header-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 72px; /* الموبايل */
+  height: 72px;
 }
 
-/* ── Logo (🔥 التصليح السحري لقص الخلفية البيضاء) ──────── */
+/* Logo */
+
 .header-logo-box {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%; /* البوكس بياخد ارتفاع الهيدر بالظبط */
-  overflow: hidden; /* 🔥 بيقص أي حاجة تطلع بره (الخلفية البيضاء اللي فوق وتحت) */
+  height: 100%;
+  overflow: hidden;
   cursor: pointer;
-  margin-left: -12px; /* عشان نزقه شمال شوية لو الفراغ من الجنب كبير */
+  margin-left: -12px;
 }
 
 .header-logo {
-  height: 170px; /* 🔥 كبرنا الصورة جداً عشان اللوجو الداخلي يكبر */
+  height: 170px;
   width: auto;
   object-fit: contain;
-  mix-blend-mode: multiply; /* 🔥 بيخلي الخلفية البيضاء شفافة وتندمج مع الهيدر */
+  mix-blend-mode: multiply;
   transition: transform 0.2s ease;
 }
 
 .header-logo-box:hover .header-logo {
-  transform: scale(1.05); /* زوم خفيف جوا البوكس المقصوص */
+  transform: scale(1.05);
 }
 
-/* ── Desktop Navigation ────────────────────────────────── */
+/* Desktop navigation */
+
 .header-desktop-nav {
   display: none;
 }
@@ -77,7 +79,8 @@
   font-weight: 800;
 }
 
-/* ── Desktop Actions (Icons) ───────────────────────────── */
+/* Action buttons */
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -97,7 +100,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .header-icon-btn:hover {
@@ -109,6 +114,8 @@
   color: #16a34a;
   background-color: #f0fdf4;
 }
+
+/* Cart badge */
 
 .header-cart-wrapper {
   position: relative;
@@ -131,7 +138,8 @@
   justify-content: center;
 }
 
-/* ── Mobile Actions ────────────────────────────────────── */
+/* Mobile actions */
+
 .header-mobile-actions {
   display: flex;
   align-items: center;
@@ -155,7 +163,8 @@
   color: #4b5563;
 }
 
-/* ── Mobile Menu Dropdown ──────────────────────────────── */
+/* Mobile menu */
+
 .header-mobile-menu {
   position: absolute;
   top: 100%;
@@ -186,7 +195,9 @@
   background-color: transparent;
   color: #4b5563;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .header-mobile-item:hover {
@@ -206,14 +217,15 @@
   border-top: 1px solid #f9fafb;
 }
 
-/* ── Media Queries (Desktop) ───────────────────────────── */
+/* Desktop styles */
+
 @media (min-width: 768px) {
   .header-inner {
-    height: 80px; /* الديسكتوب */
+    height: 80px;
   }
 
   .header-logo {
-    height: 120px; /* 🔥 بنكبر الصورة جداً في الديسكتوب والبوكس هيقص الزيادات البيضاء */
+    height: 120px;
   }
 
   .header-desktop-nav {

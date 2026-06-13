@@ -12,16 +12,35 @@ export function FormField({
   handleBlur,
   inputStyle,
   fieldError,
-  fieldValid
+  fieldValid,
 }: any) {
   const getMaxLength = () => {
     switch (name) {
+      case "phone":
+        return 15;
+
+      case "address":
+        return 50;
+
+      case "city":
+      case "state":
+        return 20;
+
+      case "zipCode":
+        return 5;
+
       case "cardNumber":
         return 19;
+
       case "expiryDate":
         return 5;
+
       case "cvv":
-        return 4;
+        return 3;
+
+      case "cardName":
+        return 50;
+
       default:
         return 50;
     }
@@ -29,13 +48,24 @@ export function FormField({
 
   return (
     <div className="space-y-1 relative">
+      {/* Label + Counter */}
+      <div className="flex justify-between items-center">
+        <Label className="text-sm font-medium text-gray-700">
+          {label} *
+        </Label>
 
-      <Label className="text-sm font-medium text-gray-700">
-        {label} *
-      </Label>
+        <span
+          className={`text-xs ${
+            (value?.length || 0) > getMaxLength()
+              ? "text-red-500"
+              : "text-gray-400"
+          }`}
+        >
+          {value?.length || 0}/{getMaxLength()}
+        </span>
+      </div>
 
       <div className="relative">
-
         <Input
           value={value}
           placeholder={placeholder}
@@ -56,7 +86,6 @@ export function FormField({
             <AlertCircle size={14} strokeWidth={3} />
           </div>
         )}
-
       </div>
 
       {fieldError(name) && (
@@ -65,7 +94,6 @@ export function FormField({
           {error}
         </p>
       )}
-
     </div>
   );
 }

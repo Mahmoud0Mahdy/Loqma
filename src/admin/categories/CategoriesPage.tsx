@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+ import { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -39,6 +39,7 @@ export function CategoriesPage() {
 
   const [openModal, setOpenModal] = useState(false);
 
+  // Load categories from API
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -70,6 +71,7 @@ export function CategoriesPage() {
     fetchData();
   }, []);
 
+  // Apply search and type filters
   useEffect(() => {
     let data = [...categories];
 
@@ -123,7 +125,7 @@ export function CategoriesPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
+      {/* Page header */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">
@@ -144,7 +146,7 @@ export function CategoriesPage() {
         </Button>
       </div>
 
-      {/* Search + Filter */}
+      {/* Search and filtering controls */}
       <Card className="p-4 shadow-sm border-gray-100 bg-white">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
@@ -182,10 +184,10 @@ export function CategoriesPage() {
         </div>
       </Card>
 
-      {/* Stats */}
+      {/* Categories overview */}
       <CategoryStats categories={categories} />
 
-      {/* Table */}
+      {/* Categories table */}
       {loading ? (
         <Card className="p-12 text-center text-gray-500 border-gray-100">
           <p>Loading categories...</p>
@@ -301,8 +303,7 @@ export function CategoriesPage() {
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              Delete
-                              Category
+                              Delete Category
                             </AlertDialogTitle>
 
                             <AlertDialogDescription>

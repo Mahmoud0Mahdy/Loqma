@@ -40,7 +40,7 @@ export function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [openDelete, setOpenDelete] = useState(false);
 
-  // ================= FETCH PRODUCTS =================
+  // Load all products from the API and store them in global state
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -82,7 +82,7 @@ export function ProductsPage() {
     fetchProducts();
   }, [dispatch]);
 
-  // ================= FETCH CATEGORIES =================
+  // Load product categories for filtering and forms
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -96,10 +96,12 @@ export function ProductsPage() {
     fetchCategories();
   }, []);
 
+  // Reset pagination when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory]);
 
+  // Filter products based on search text and selected category
   const filteredProducts = state.products.filter((product) => {
     const searchLower = searchQuery.toLowerCase();
 
@@ -116,12 +118,14 @@ export function ProductsPage() {
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  // Get products for the current page only
   const currentProducts = filteredProducts.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE,
   );
 
-  // 🔥🔥🔥 التعديل المهم هنا
+  // Open add product dialog or load product details before editing
   const handleOpenDialog = async (product: Product | null = null) => {
     if (!product) {
       setEditingProduct(null);
@@ -133,9 +137,11 @@ export function ProductsPage() {
       const res = await axiosInstance.get(`/Products/${product.id}`);
 
       const data = res.data;
+
       const selectedCategory = categories.find(
         (c) => c.name === data.categoryName,
       );
+
       const mappedProduct: Product = {
         id: data.id.toString(),
         name: data.name,
@@ -164,7 +170,7 @@ export function ProductsPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
+      {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">
@@ -173,19 +179,22 @@ export function ProductsPage() {
           <p className="text-gray-600">Manage your product inventory</p>
         </div>
 
+        {/* Create new product */}
         <Button
           onClick={() => handleOpenDialog()}
           className="bg-green-600 hover:bg-green-700"
         >
-          <Plus className="w-4 h-4 mr-2" /> Add Product
+          <Plus className="w-4 h-4 mr-2" />
+          Add Product
         </Button>
       </div>
 
-      {/* Filters */}
+      {/* Search and category filters */}
       <Card className="p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-grow">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+
             <Input
               placeholder="Search..."
               value={searchQuery}
@@ -202,6 +211,7 @@ export function ProductsPage() {
               <SelectTrigger>
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
+
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
 
@@ -216,9 +226,10 @@ export function ProductsPage() {
         </div>
       </Card>
 
+      {/* Product statistics */}
       <ProductStats products={state.products} />
 
-      {/* Grid */}
+      {/* Products grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentProducts.map((product) => (
           <ProductCard
@@ -233,6 +244,7 @@ export function ProductsPage() {
         ))}
       </div>
 
+      {/* Empty state */}
       {filteredProducts.length === 0 && (
         <Card className="p-12 text-center">
           <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -240,9 +252,10 @@ export function ProductsPage() {
         </Card>
       )}
 
-      {/* Pagination */}
+      {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-3 mt-8">
+          {/* Previous page button */}
           <Button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => p - 1)}
@@ -250,12 +263,14 @@ export function ProductsPage() {
             <ChevronLeft />
           </Button>
 
+          {/* Page number buttons */}
           {Array.from({ length: totalPages }, (_, i) => (
             <Button key={i} onClick={() => setCurrentPage(i + 1)}>
               {i + 1}
             </Button>
           ))}
 
+          {/* Next page button */}
           <Button
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((p) => p + 1)}
@@ -265,12 +280,14 @@ export function ProductsPage() {
         </div>
       )}
 
+      {/* Add/Edit product dialog */}
       <ProductFormDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         editingProduct={editingProduct}
       />
 
+      {/* Delete confirmation dialog */}
       <DeleteProductDialog
         product={selectedProduct}
         open={openDelete}

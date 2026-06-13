@@ -4,26 +4,28 @@ const axiosInstance = axios.create({
   baseURL: "https://localhost:7058/api",
 });
 
-// متغيرات للتحكم في الطلبات المتزامنة
+// Tracks refresh state to prevent multiple refresh requests
 let isRefreshing = false;
+
+// Stores requests that fail while a token refresh is in progress
 let failedQueue: {
   resolve: (token: string) => void;
   reject: (error: any) => void;
 }[] = [];
 
 const processQueue = (error: any, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
+  failedQueue.forEach((request) => {
     if (error) {
-      prom.reject(error);
+      request.reject(error);
     } else {
-      prom.resolve(token!);
+      request.resolve(token!);
     }
   });
 
   failedQueue = [];
 };
 
-// ================= REQUEST =================
+// Attach access token to every outgoing request
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -34,7 +36,7 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-// ================= RESPONSE =================
+// Handle expired tokens and retry failed requests
 axiosInstance.interceptors.response.use(
   (response) => response,
 
@@ -47,13 +49,17 @@ axiosInstance.interceptors.response.use(
       !originalRequest?.url?.includes("/Auth/refresh") &&
       !originalRequest?.url?.includes("/Auth/logout")
     ) {
-      // لو فيه Refresh شغال بالفعل
+      // Wait for the current refresh request if one is already running
       if (isRefreshing) {
         return new Promise<string>((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
+          failedQueue.push({
+            resolve,
+            reject,
+          });
         })
           .then((token) => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
+
             return axiosInstance(originalRequest);
           })
           .catch((err) => Promise.reject(err));
@@ -99,7 +105,7 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    // أي 401 تاني
+    // Handle any remaining unauthorized requests
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
@@ -111,10 +117,10 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
-// ================= LOGOUT =================
+// Logout current user and clear local session data
 export const logoutApi = async () => {
   const refreshToken = localStorage.getItem("refreshToken");
 

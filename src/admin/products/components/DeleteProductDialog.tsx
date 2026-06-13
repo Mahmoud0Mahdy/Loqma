@@ -23,6 +23,7 @@ interface Props {
 export function DeleteProductDialog({ product, open, onClose }: Props) {
   const { dispatch } = useApp();
 
+  // Handles product deletion and updates the local state
   const handleDelete = async () => {
     if (!product) return;
 
@@ -35,24 +36,29 @@ export function DeleteProductDialog({ product, open, onClose }: Props) {
       onClose();
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Cannot delete this product"
+        error.response?.data?.message || "Cannot delete this product",
       );
     }
   };
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
+      {/* Delete confirmation dialog */}
       <AlertDialogContent>
         <AlertDialogHeader>
+          {/* Dialog title and warning message */}
           <AlertDialogTitle>Delete Product</AlertDialogTitle>
+
           <AlertDialogDescription>
             Are you sure you want to delete {product?.name}? This action cannot
             be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
+        {/* Dialog actions */}
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
+
           <AlertDialogAction
             onClick={handleDelete}
             className="bg-red-500 hover:bg-red-600"

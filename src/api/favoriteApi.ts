@@ -1,41 +1,33 @@
 import axiosInstance from "./axiosInstance";
 
-/* =========================
-   🔴 PRODUCT FAVORITES
-========================= */
+/* =========================  Product Favorites  ========================= */
 
-// toggle (save / unsave)
-export const toggleProductFavorite = async (
-  productId: number | string
-) => {
-  const res = await axiosInstance.post(
-    `/Favorites/${productId}/save`
-  );
+// Add or remove a product from favorites
+export const toggleProductFavorite = async (productId: number | string) => {
+  const res = await axiosInstance.post(`/Favorites/${productId}/save`);
+
   return res.data;
 };
 
-// get all favorite products
+// Get all favorite products for the current user
 export const getFavoriteProducts = async () => {
-  const res = await axiosInstance.get(`/Favorites`);
+  const res = await axiosInstance.get("/Favorites");
+
   return res.data;
 };
 
-/* =========================
-   🟢 RECIPE FAVORITES
-========================= */
+/* =========================  Recipe Favorites  ========================= */
 
-// toggle (save / unsave)
-export const toggleRecipeFavorite = async (
-  recipeId: number | string
-) => {
-  const res = await axiosInstance.post(
-    `/SavedRecipes/${recipeId}/save`
-  );
+// Add or remove a recipe from saved recipes
+export const toggleRecipeFavorite = async (recipeId: number | string) => {
+  const res = await axiosInstance.post(`/SavedRecipes/${recipeId}/save`);
+
   return res.data;
 };
 
-// get all saved recipes
+// Get all saved recipes for the current user
 export const getSavedRecipes = async () => {
-  const res = await axiosInstance.get(`/SavedRecipes`);
+  const res = await axiosInstance.get("/SavedRecipes");
+
   return res.data;
 };

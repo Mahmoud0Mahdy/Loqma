@@ -13,14 +13,14 @@ export const RemoveConfirmModal = memo(function RemoveConfirmModal({
   onCancel,
 }: Props) {
 
-  // 🔥 تثبيت onCancel
+  // onCancel
   const onCancelRef = useRef(onCancel);
 
   useEffect(() => {
     onCancelRef.current = onCancel;
   }, [onCancel]);
 
-  // 🔥 ESC handler + lock scroll
+  // ESC handler + lock scroll
   useEffect(() => {
     if (!open) return;
 

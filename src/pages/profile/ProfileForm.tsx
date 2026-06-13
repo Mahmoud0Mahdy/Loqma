@@ -15,10 +15,9 @@ export default function ProfileForm({ profile, setProfile }: any) {
 
   const handleSave = async () => {
     try {
-      // 👇 اعمل update
+      // update
       await updateUserProfile(form);
 
-      // 👇 هات الداتا الجديدة من السيرفر
       const freshData = await getUserProfile();
 
       setProfile(freshData);

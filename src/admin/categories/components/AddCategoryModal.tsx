@@ -41,10 +41,7 @@ export default function AddCategoryModal({
 
       await createCategory({
         name: form.name.trim(),
-        type:
-          form.type === "recipe"
-            ? "Recipe"
-            : "Product",
+        type: form.type === "recipe" ? "Recipe" : "Product",
       });
 
       toast.success("Category added successfully");
@@ -55,14 +52,14 @@ export default function AddCategoryModal({
       console.error(error);
 
       toast.error(
-        error?.response?.data?.message ||
-          "Failed to add category"
+        error?.response?.data?.message || "Failed to add category"
       );
     } finally {
       setLoading(false);
     }
   };
 
+  // Reset form and close modal
   const handleClose = () => {
     setForm({
       name: "",
@@ -75,9 +72,7 @@ export default function AddCategoryModal({
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(open) =>
-        !open && handleClose()
-      }
+      onOpenChange={(open) => !open && handleClose()}
     >
       <DialogContent className="max-w-[500px] w-[95vw] p-8 rounded-3xl bg-white border-0 shadow-2xl">
         <DialogHeader className="text-center sm:text-center">
@@ -91,7 +86,6 @@ export default function AddCategoryModal({
         </DialogHeader>
 
         <div className="space-y-6 py-2">
-          {/* Name */}
           <div className="space-y-2 text-left">
             <Label className="text-sm font-bold text-gray-700">
               Name
@@ -110,14 +104,12 @@ export default function AddCategoryModal({
             />
           </div>
 
-          {/* Type Buttons */}
           <div className="space-y-2 text-left">
             <Label className="text-sm font-bold text-gray-700">
               Category Type
             </Label>
 
             <div className="grid grid-cols-2 gap-3">
-              {/* Product */}
               <button
                 type="button"
                 onClick={() =>
@@ -135,7 +127,6 @@ export default function AddCategoryModal({
                 Product
               </button>
 
-              {/* Recipe */}
               <button
                 type="button"
                 onClick={() =>
@@ -156,7 +147,7 @@ export default function AddCategoryModal({
           </div>
         </div>
 
-        {/* Actions */}
+        {/* Modal actions */}
         <div className="flex justify-end gap-3 pt-4 mt-2 border-t border-gray-100">
           <Button
             variant="outline"
@@ -171,9 +162,7 @@ export default function AddCategoryModal({
             disabled={loading}
             className="h-11 px-6 rounded-xl bg-green-600 hover:bg-green-700 text-white shadow-sm"
           >
-            {loading
-              ? "Saving..."
-              : "Save Category"}
+            {loading ? "Saving..." : "Save Category"}
           </Button>
         </div>
       </DialogContent>

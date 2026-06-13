@@ -10,7 +10,7 @@ import { Plus, Minus, Trash2 } from "lucide-react";
 interface CartItemType {
   cartItemId: number;
 
-  // 🔥 NEW API
+  // NEW API
   productId?: number | null;
 
   ghostCraftOrderId?: number | null;
@@ -25,7 +25,7 @@ interface CartItemType {
 
   total?: number;
 
-  // 🔥 OLD API
+  // OLD API
   product?: {
     id: string;
     name: string;
@@ -54,10 +54,10 @@ const CartItem = memo(
     onDecrease: (item: CartItemType) => void;
     onRemove: (item: CartItemType) => void;
   }) {
-    // 🔥 detect ghost craft
+    // detect ghost craft
     const isGhostCraft = !!item.ghostCraftOrderId;
 
-    // 🔥 support old + new api
+    // support old + new api
     const productId = item.product?.id || item.productId || "";
 
     const productName = isGhostCraft
@@ -72,7 +72,7 @@ const CartItem = memo(
 
     const quantity = Number(item.quantity) || 0;
 
-    // 🔥 CONTENT
+    // CONTENT
     const content = (
       <>
         {/* IMAGE / GHOST */}
@@ -100,7 +100,7 @@ const CartItem = memo(
 
         {/* INFO */}
         <div>
-          {/* 🔥 GHOST LABEL */}
+          {/* GHOST LABEL */}
           {isGhostCraft && (
             <div className="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-semibold mb-2">
               Ghost Craft
@@ -122,12 +122,12 @@ const CartItem = memo(
           {/* LEFT */}
 
           {isGhostCraft ? (
-            // 🔥 NO CLICK FOR GHOST CRAFT
+            // NO CLICK FOR GHOST CRAFT
             <div className="flex items-center gap-4 flex-1 cursor-default">
               {content}
             </div>
           ) : (
-            // 🔥 NORMAL PRODUCTS KEEP LINK
+            // NORMAL PRODUCTS KEEP LINK
             <Link
               to={`/product/${productId}`}
               className="flex items-center gap-4 flex-1"

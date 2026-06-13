@@ -27,14 +27,18 @@ export function PostCard({ post, onDelete }: PostCardProps) {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
 
+  // Generate fallback avatar if user avatar is unavailable
   const avatarSrc = useMemo(() => {
     if (avatarFailed || !post.userAvatar) {
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(post.userName || post.username || "User")}&background=e5e7eb&color=374151`;
     }
+
     return post.userAvatar;
   }, [avatarFailed, post.userAvatar, post.userName, post.username]);
 
+  // Extract post image and tags
   const postImage = post.image || post.imageUrl;
+
   const tags = Array.isArray(post.tags)
     ? post.tags
     : typeof post.tags === "string"
@@ -44,6 +48,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
           .filter(Boolean)
       : [];
 
+  // Load comments when user expands comments section
   const handleToggleComments = async () => {
     if (showComments) {
       setShowComments(false);
@@ -57,11 +62,14 @@ export function PostCard({ post, onDelete }: PostCardProps) {
     }
 
     setCommentsLoading(true);
+
     try {
       const data = await getPostComments(post.id);
+
       const normalizedComments = Array.isArray(data)
         ? data
         : (data?.data ?? []);
+
       setComments(normalizedComments);
     } catch (error) {
       toast.error("Failed to load comments");
@@ -74,6 +82,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
   return (
     <Card className="p-4">
       <div className="flex gap-3">
+        {/* User avatar */}
         <img
           src={avatarSrc}
           alt={post.userName || post.username || "User"}
@@ -82,6 +91,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
         />
 
         <div className="flex-1">
+          {/* Post header */}
           <div className="flex justify-between items-start mb-1">
             <div>
               <h3 className="font-semibold leading-5">{post.title}</h3>
@@ -90,6 +100,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
               </p>
             </div>
 
+            {/* Delete post action */}
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
@@ -100,6 +111,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </AlertDialogTrigger>
+
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete Post</AlertDialogTitle>
@@ -107,8 +119,10 @@ export function PostCard({ post, onDelete }: PostCardProps) {
                     Are you sure you want to delete this post?
                   </AlertDialogDescription>
                 </AlertDialogHeader>
+
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
+
                   <AlertDialogAction
                     onClick={() => onDelete(post.id)}
                     className="bg-red-500 hover:bg-red-600"
@@ -120,6 +134,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
             </AlertDialog>
           </div>
 
+          {/* Post content preview */}
           <p
             className="text-gray-700 text-sm mb-2 overflow-hidden"
             style={{
@@ -131,6 +146,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
             {post.content}
           </p>
 
+          {/* Post tags */}
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-2">
               {tags.map((tag: string) => (
@@ -144,6 +160,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
             </div>
           )}
 
+          {/* Post image */}
           {postImage && (
             <img
               src={postImage}
@@ -152,21 +169,25 @@ export function PostCard({ post, onDelete }: PostCardProps) {
             />
           )}
 
+          {/* Post statistics */}
           <div className="flex gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-1">
               <Heart className="w-4 h-4" />
               {post.votes}
             </div>
+
             <div className="flex items-center gap-1">
               <MessageCircle className="w-4 h-4" />
               {post.commentsCount}
             </div>
+
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               {new Date(post.createdAt).toLocaleDateString()}
             </div>
           </div>
 
+          {/* Comments section */}
           <div className="mt-3 pt-3 border-t border-gray-100">
             <Button variant="outline" size="sm" onClick={handleToggleComments}>
               {showComments ? "Hide Comments" : "View Comments"}
@@ -174,6 +195,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
 
             {showComments && (
               <div className="mt-3 space-y-2">
+                {/* Comments loading state */}
                 {commentsLoading ? (
                   <p className="text-sm text-gray-500">Loading comments...</p>
                 ) : comments.length === 0 ? (
@@ -188,12 +210,14 @@ export function PostCard({ post, onDelete }: PostCardProps) {
                         <p className="text-sm font-medium text-gray-800">
                           {comment.userName || comment.username || "User"}
                         </p>
+
                         <p className="text-xs text-gray-500">
                           {comment.createdAt
                             ? new Date(comment.createdAt).toLocaleDateString()
                             : "-"}
                         </p>
                       </div>
+
                       <p className="text-sm text-gray-700 mt-1">
                         {comment.content}
                       </p>

@@ -25,7 +25,6 @@ export function RecipesPagination({
   const navigate = useNavigate();
 
   const handleNext = () => {
-    // 🔥 Guest يقدر يشوف أول 30 Recipe فقط
     if (!state.isAuthenticated && currentPage === 1) {
       toast.error("Please login first to browse more recipes");
 

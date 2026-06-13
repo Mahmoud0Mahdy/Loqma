@@ -3,7 +3,7 @@
    Styles for: PostStats, PostsTable, PostsPage
    ============================================================ */
 
-/* ── PostStats wrapper ────────────────────────────────────── */
+/* Stats section */
 .ps-stats-wrapper {
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   margin-bottom: 16px;
 }
 
-/* ── Total Posts card (top, full width) ───────────────────── */
+/* Total posts card */
 .ps-total-card {
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@
   padding: 20px 16px;
   gap: 6px;
   border-radius: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .ps-total-icon {
@@ -36,12 +36,12 @@
 }
 
 .ps-total-label {
-  color: #6b7280; 
-  font-size: 14px; 
-  font-weight: 650; 
-  text-transform: uppercase; 
-  letter-spacing: 0.05em; 
-  margin-bottom: 4px; 
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
 }
 
 .ps-total-value {
@@ -51,15 +51,17 @@
   line-height: 1;
 }
 
-/* ── Mini status cards grid (bottom row) ──────────────────── */
-  .ps-mini-grid {
+/* Status cards grid */
+.ps-mini-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* اتعدلت لـ 3 بدل 4 */
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 
 @media (max-width: 640px) {
-  .ps-mini-grid { grid-template-columns: repeat(2, 1fr); }
+  .ps-mini-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .ps-mini-card {
@@ -71,11 +73,13 @@
   gap: 8px;
   border-radius: 14px;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.18s ease;
 }
 
-.ps-mini-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.09); }
+.ps-mini-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
+}
 
 .ps-mini-icon {
   width: 40px;
@@ -86,34 +90,52 @@
   justify-content: center;
 }
 
-.ps-mini-icon--orange { background: #fff7ed; color: #ea580c; }
-.ps-mini-icon--rose   { background: #fff1f2; color: #e11d48; }
-.ps-mini-icon--green  { background: #f0fdf4; color: #16a34a; }
-.ps-mini-icon--red    { background: #fef2f2; color: #dc2626; }
+.ps-mini-icon--orange {
+  background: #fff7ed;
+  color: #ea580c;
+}
+.ps-mini-icon--rose {
+  background: #fff1f2;
+  color: #e11d48;
+}
+.ps-mini-icon--green {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+.ps-mini-icon--red {
+  background: #fef2f2;
+  color: #dc2626;
+}
 
 .ps-mini-value {
-  font-size: 24px; 
-  font-weight: 700; 
-  line-height: 1; 
-  margin-bottom: 4px; 
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
 }
 
-.ps-mini-value--orange { color: #ea580c; }
-.ps-mini-value--rose   { color: #e11d48; }
-.ps-mini-value--green  { color: #16a34a; }
-.ps-mini-value--red    { color: #dc2626; }
+.ps-mini-value--orange {
+  color: #ea580c;
+}
+.ps-mini-value--rose {
+  color: #e11d48;
+}
+.ps-mini-value--green {
+  color: #16a34a;
+}
+.ps-mini-value--red {
+  color: #dc2626;
+}
 
 .ps-mini-label {
-  color: #6b7280; 
-  font-size: 11px; 
-  font-weight: 700; 
-  text-transform: uppercase; 
-  letter-spacing: 0.05em; 
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* ══════════════════════════════════════════════════════════
-   الجدول الجديد بالكامل بمقاسات ومساحات الـ Orders الكبيرة
-   ══════════════════════════════════════════════════════════ */
+/* Posts table container */
 .pa-table-wrap {
   background: #ffffff;
   overflow: hidden;
@@ -132,14 +154,14 @@
   text-align: left;
 }
 
-/* الـ Header الرمادي الفاتح المريح للعين */
+/* Table header */
 .pa-table thead {
   background-color: #f9fafb;
   border-bottom: 1px solid #f3f4f6;
 }
 
 .pa-table th {
-  padding: 12px 24px; /* نفس مسافات الـ Orders بالظبط px-6 py-3 */
+  padding: 12px 24px;
   font-size: 12px;
   font-weight: 900;
   color: #9ca3af;
@@ -148,7 +170,7 @@
   white-space: nowrap;
 }
 
-/* الـ Rows والـ Body وعمل تأثير عند الـ Hover */
+/* Table rows */
 .pa-table tbody tr {
   border-bottom: 1px solid #f3f4f6;
   transition: background-color 0.15s ease;
@@ -159,11 +181,11 @@
 }
 
 .pa-table td {
-  padding: 16px 24px; /* مسافات عمودية وأفقية واسعة جداً ومريحة px-6 py-4 */
+  padding: 16px 24px;
   vertical-align: middle;
 }
 
-/* رقم البوست */
+/* Post ID */
 .pa-post-id {
   font-size: 14px;
   font-weight: 500;
@@ -171,7 +193,7 @@
   white-space: nowrap;
 }
 
-/* دمج الكاتب مع التاريخ تحت بعض */
+/* Author section */
 .pa-author-cell {
   display: flex;
   align-items: center;
@@ -211,7 +233,7 @@
   margin: 0;
 }
 
-/* عنوان البوست وحمايته من التمدد خارج الشاشة */
+/* Post title */
 .pa-title {
   font-size: 14px;
   font-weight: 500;
@@ -223,7 +245,7 @@
   display: block;
 }
 
-/* خانات الإحصائيات (Saves & Comments) */
+/* Statistics cells */
 .pa-stat-cell {
   display: flex;
   align-items: center;
@@ -241,7 +263,7 @@
   color: #3b82f6;
 }
 
-/* حاوية الأزرار في أقصى اليمين لتفادي الـ Scroll */
+/* Action buttons */
 .pa-actions {
   display: flex;
   align-items: center;

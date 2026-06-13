@@ -8,18 +8,16 @@
   padding-bottom: 80px;
 }
 
-/* 🔥 كبرنا العرض هنا لـ 1400px عشان الفلتر يلزق في الشمال */
 .mp-layout {
   max-width: 1400px;
   width: 96%;
   margin: 32px auto;
   display: flex;
   flex-direction: row; 
-  gap: 40px; /* مسافة بين الفلتر والبوستات */
+  gap: 40px; 
   align-items: flex-start;
 }
 
-/* الفلتر الصغير على الشمال */
 .mp-sidebar {
   width: 260px;
   flex-shrink: 0;
@@ -32,10 +30,9 @@
   top: 80px;
 }
 
-/* منطقة البوستات */
 .mp-feed {
   flex: 1;
-  max-width: 900px; /* 🔥 حددنا أقصى عرض للبوستات عشان متمطش */
+  max-width: 900px; 
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -114,7 +111,6 @@
   border-color: #16a34a;
 }
 
-/* للموبايل */
 @media (max-width: 768px) {
   .mp-layout {
     flex-direction: column;

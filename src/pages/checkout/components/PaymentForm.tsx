@@ -79,7 +79,7 @@ export function PaymentForm({
 
       handleInputChange(field, value);
 
-      // 🔥 live validation
+      // live validation
       if (touched[field]) {
         const valid = validatePaymentField(field, value);
         setErrors((prev) => ({
@@ -129,7 +129,7 @@ export function PaymentForm({
     try {
       setLoading(true);
 
-      // 🔥 save payment method
+      // save payment method
       setCheckoutField("paymentMethodId", 1);
 
       const [month, year] = (formData.expiryDate as string).split("/");
@@ -145,7 +145,7 @@ export function PaymentForm({
 
       console.log("CONFIRM PAYMENT:", payload);
 
-      // 🔥 confirm payment
+      // confirm payment
       await confirmPayment(checkoutData.orderId, payload);
 
       toast.success("Payment confirmed successfully");

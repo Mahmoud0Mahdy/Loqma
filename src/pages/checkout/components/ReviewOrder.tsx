@@ -111,17 +111,20 @@ export function ReviewOrder({
         </div>
 
         {/* BUTTON */}
-        <div className="pt-2">
-          <Button
-            onClick={placeOrder}
-            disabled={placingOrder}
-            className="w-full bg-green-600 hover:bg-green-700"
-          >
-            {placingOrder
-              ? "Placing Order..."
-              : "Place Order"}
-          </Button>
-        </div>
+       {/* BUTTON */}
+<div className="pt-2">
+  <Button
+    onClick={placeOrder}
+    disabled={placingOrder}
+    className="w-full bg-green-600 hover:bg-green-700"
+  >
+    {checkoutData.orderId
+      ? "Finish"
+      : placingOrder
+      ? "Placing Order..."
+      : "Place Order"}
+  </Button>
+</div>
       </CardContent>
     </Card>
   );

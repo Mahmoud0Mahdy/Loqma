@@ -48,7 +48,7 @@ export function UserTable({ users, onRefresh }) {
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                {/* User Info & Avatar */}
+                {/* User identity */}
                 <td>
                   <div className="ua-user">
                     <div className="ua-avatar">
@@ -64,10 +64,10 @@ export function UserTable({ users, onRefresh }) {
                   </div>
                 </td>
 
-                {/* Email */}
+                {/* User email */}
                 <td className="ua-email">{user.email}</td>
 
-                {/* Role */}
+                {/* User role */}
                 <td>
                   <Badge
                     variant={user.role === "admin" ? "default" : "secondary"}
@@ -76,7 +76,7 @@ export function UserTable({ users, onRefresh }) {
                   </Badge>
                 </td>
 
-                {/* Status */}
+                {/* Account status */}
                 <td
                   style={{
                     textAlign: "center",
@@ -87,7 +87,7 @@ export function UserTable({ users, onRefresh }) {
                   </Badge>
                 </td>
 
-                {/* Actions */}
+                {/* Enable / disable account */}
                 <td
                   style={{
                     textAlign: "right",

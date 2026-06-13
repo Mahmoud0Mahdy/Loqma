@@ -7,7 +7,6 @@ import { toast } from "sonner@2.0.3";
 
 import { GhostCraftOrder } from "../../api/ghostCraftApi";
 
-// 🔥 الجديد
 import { addCartItem } from "../../api/cartApi";
 
 export function GhostCraftSummaryPage() {

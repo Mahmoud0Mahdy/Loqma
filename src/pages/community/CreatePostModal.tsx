@@ -7,7 +7,6 @@ import { useApp } from "../../contexts/AppContext";
 import { createPost } from "../../api/communityApi";
 
 // UI Components
-// ملاحظة: تأكد من أن مسارات المكونات أدناه تتطابق مع هيكلة مجلدات مشروعك (سواء كانت ./ui أو ../../components/ui)
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
 import {

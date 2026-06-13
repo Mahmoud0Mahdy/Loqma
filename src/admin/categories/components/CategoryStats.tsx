@@ -1,6 +1,6 @@
 import { Card } from '../../../components/ui/card';
 import { LayoutGrid, Package, ChefHat } from "lucide-react";
-import "../../categories/components/Categories-admin.css"; // تأكد من المسار
+import "../../categories/components/Categories-admin.css";
 
 interface CategoryStatsProps {
   categories: any[];
@@ -12,8 +12,8 @@ export function CategoryStats({ categories }: CategoryStatsProps) {
 
   return (
     <div className="ca-stats-wrapper">
-      
-      {/* ── Top: Total ── */}
+
+      {/* Categories overview */}
       <Card className="ca-total-card">
         <div className="ca-total-icon">
           <LayoutGrid size={22} />
@@ -22,10 +22,9 @@ export function CategoryStats({ categories }: CategoryStatsProps) {
         <p className="ca-total-value">{categories.length}</p>
       </Card>
 
-      {/* ── Bottom: 2 Types ── */}
+      {/* Category breakdown */}
       <div className="ca-mini-grid">
-        
-        {/* Products */}
+
         <Card className="ca-mini-card">
           <div className="ca-mini-icon ca-mini-icon--blue">
             <Package size={18} />
@@ -34,7 +33,6 @@ export function CategoryStats({ categories }: CategoryStatsProps) {
           <p className="ca-mini-label">PRODUCTS</p>
         </Card>
 
-        {/* Recipes */}
         <Card className="ca-mini-card">
           <div className="ca-mini-icon ca-mini-icon--green">
             <ChefHat size={18} />

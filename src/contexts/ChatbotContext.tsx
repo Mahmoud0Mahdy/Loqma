@@ -43,7 +43,6 @@ const ChatbotContext = createContext<
   ChatbotContextType | undefined
 >(undefined);
 
-// الرسالة الافتراضية متعدلة بالـ HTML عشان تظهر بشكل تحذيري
 const DEFAULT_MESSAGE: Message = {
   id: '1',
   role: 'assistant',

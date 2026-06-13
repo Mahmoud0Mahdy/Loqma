@@ -13,9 +13,12 @@ import { toast } from "sonner";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../../components/ui/avatar";
 
-// 🔥 استيراد مكونات الـ AlertDialog لرسالة التأكيد
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,7 +43,6 @@ import {
 import { Post } from "./PostCard";
 import { useApp } from "../../contexts/AppContext";
 
-// ملف الـ CSS
 import "./post-details.css";
 
 interface CommentItem {
@@ -243,7 +245,10 @@ export function PostDetailsPage() {
   if (loading) {
     return (
       <div className="pd-wrapper">
-        <div className="pd-container" style={{ textAlign: "center", paddingTop: "100px" }}>
+        <div
+          className="pd-container"
+          style={{ textAlign: "center", paddingTop: "100px" }}
+        >
           <p style={{ color: "#6b7280" }}>Loading post...</p>
         </div>
       </div>
@@ -253,7 +258,10 @@ export function PostDetailsPage() {
   if (!post) {
     return (
       <div className="pd-wrapper">
-        <div className="pd-container" style={{ textAlign: "center", paddingTop: "100px" }}>
+        <div
+          className="pd-container"
+          style={{ textAlign: "center", paddingTop: "100px" }}
+        >
           <p style={{ color: "#6b7280" }}>Post not found.</p>
         </div>
       </div>
@@ -263,8 +271,11 @@ export function PostDetailsPage() {
   return (
     <div className="pd-wrapper">
       <div className="pd-container">
-        
-        <button type="button" onClick={() => navigate(-1)} className="pd-back-btn">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="pd-back-btn"
+        >
           <ArrowLeft size={18} />
           Back
         </button>
@@ -283,11 +294,18 @@ export function PostDetailsPage() {
               </div>
             </div>
 
-            {/* 🔥 إضافة Validation لمسح البوست */}
             {canDeletePost() && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <button style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px" }}>
+                  <button
+                    style={{
+                      color: "#ef4444",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: "4px",
+                    }}
+                  >
                     <Trash2 size={20} />
                   </button>
                 </AlertDialogTrigger>
@@ -300,7 +318,10 @@ export function PostDetailsPage() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeletePost} className="bg-red-500 hover:bg-red-600 text-white">
+                    <AlertDialogAction
+                      onClick={handleDeletePost}
+                      className="bg-red-500 hover:bg-red-600 text-white"
+                    >
                       Delete
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -314,11 +335,7 @@ export function PostDetailsPage() {
 
           {post.imageUrl && (
             <div className="pd-image-wrapper">
-              <img
-                src={post.imageUrl}
-                alt={post.title}
-                className="pd-image"
-              />
+              <img src={post.imageUrl} alt={post.title} className="pd-image" />
             </div>
           )}
 
@@ -335,18 +352,24 @@ export function PostDetailsPage() {
               <button
                 onClick={() => handleVote(1)}
                 className={`p-1 rounded hover:bg-gray-100 transition-colors ${
-                  post.currentUserVote === 1 ? "text-orange-500" : "text-gray-400"
+                  post.currentUserVote === 1
+                    ? "text-orange-500"
+                    : "text-gray-400"
                 }`}
               >
                 <ArrowUp size={20} />
               </button>
-              <span className={`text-sm font-bold ${post.upvotes > 0 ? "text-orange-600" : "text-gray-600"}`}>
+              <span
+                className={`text-sm font-bold ${post.upvotes > 0 ? "text-orange-600" : "text-gray-600"}`}
+              >
                 {post.upvotes}
               </span>
               <button
                 onClick={() => handleVote(-1)}
                 className={`p-1 rounded hover:bg-gray-100 transition-colors ${
-                  post.currentUserVote === -1 ? "text-blue-500" : "text-gray-400"
+                  post.currentUserVote === -1
+                    ? "text-blue-500"
+                    : "text-gray-400"
                 }`}
               >
                 <ArrowDown size={20} />
@@ -355,16 +378,23 @@ export function PostDetailsPage() {
 
             <div className="flex items-center gap-1 text-gray-600">
               <MessageCircle size={18} />
-              <span className="text-sm font-medium">{post.comments} comments</span>
+              <span className="text-sm font-medium">
+                {post.comments} comments
+              </span>
             </div>
 
             <button
               onClick={handleSave}
               className={`flex items-center gap-1 font-medium transition-colors ${
-                post.isSaved ? "text-orange-500" : "text-gray-600 hover:text-orange-500"
+                post.isSaved
+                  ? "text-orange-500"
+                  : "text-gray-600 hover:text-orange-500"
               }`}
             >
-              <Bookmark size={18} fill={post.isSaved ? "currentColor" : "none"} />
+              <Bookmark
+                size={18}
+                fill={post.isSaved ? "currentColor" : "none"}
+              />
               <span className="text-sm">{post.isSaved ? "Saved" : "Save"}</span>
             </button>
           </div>
@@ -372,7 +402,14 @@ export function PostDetailsPage() {
 
         {/* Comments Card */}
         <div className="pd-card">
-          <h2 style={{ fontSize: "20px", fontWeight: "800", color: "#111827", marginBottom: "20px" }}>
+          <h2
+            style={{
+              fontSize: "20px",
+              fontWeight: "800",
+              color: "#111827",
+              marginBottom: "20px",
+            }}
+          >
             Comments
           </h2>
 
@@ -391,20 +428,31 @@ export function PostDetailsPage() {
           <div className="space-y-4">
             {comments.length > 0 ? (
               comments.map((comment) => (
-                <div key={comment.id} className="border border-gray-100 rounded-lg p-5 bg-gray-50/50">
+                <div
+                  key={comment.id}
+                  className="border border-gray-100 rounded-lg p-5 bg-gray-50/50"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={comment.userAvatar} alt={comment.userName} />
-                        <AvatarFallback>{comment.userName.charAt(0)}</AvatarFallback>
+                        <AvatarImage
+                          src={comment.userAvatar}
+                          alt={comment.userName}
+                        />
+                        <AvatarFallback>
+                          {comment.userName.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm font-bold text-gray-900">{comment.userName}</p>
-                        <p className="text-xs font-medium text-gray-500">{comment.createdAt}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          {comment.userName}
+                        </p>
+                        <p className="text-xs font-medium text-gray-500">
+                          {comment.createdAt}
+                        </p>
                       </div>
                     </div>
 
-                    {/* 🔥 إضافة Validation لمسح الكومنت */}
                     {canDeleteComment(comment) && (
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -421,7 +469,10 @@ export function PostDetailsPage() {
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteComment(comment.id)} className="bg-red-500 hover:bg-red-600 text-white">
+                            <AlertDialogAction
+                              onClick={() => handleDeleteComment(comment.id)}
+                              className="bg-red-500 hover:bg-red-600 text-white"
+                            >
                               Delete
                             </AlertDialogAction>
                           </AlertDialogFooter>
@@ -429,7 +480,9 @@ export function PostDetailsPage() {
                       </AlertDialog>
                     )}
                   </div>
-                  <p className="text-gray-700 mt-3 text-sm leading-relaxed">{comment.content}</p>
+                  <p className="text-gray-700 mt-3 text-sm leading-relaxed">
+                    {comment.content}
+                  </p>
                 </div>
               ))
             ) : (
@@ -439,7 +492,6 @@ export function PostDetailsPage() {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

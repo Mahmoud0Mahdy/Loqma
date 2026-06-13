@@ -190,7 +190,6 @@ export function ShopPage() {
               <CardContent className="p-0 w-full">
                 {viewMode === "grid" ? (
                   <>
-                    {/* GRID (سيبناه زي ما هو) */}
                     <div className="aspect-square overflow-hidden rounded-lg relative">
                       <ImageWithFallback
                         src={product.imageUrl}
@@ -231,7 +230,6 @@ export function ShopPage() {
                   </>
                 ) : (
                   <>
-                    {/* LIST (المظبوط زي الصورة) */}
                     <div className="flex items-center gap-4 w-full">
                       {/* Image */}
                       <div className="w-28 h-20 rounded-lg overflow-hidden flex-shrink-0">

@@ -7,14 +7,12 @@ import { useState } from "react";
 export default function MiniCart({ isOpen = true, onClose }: any) {
   const { cart, updateItem, removeItem } = useCart();
 
-  // 🔥 جديد
   const { resetCheckout, setCheckoutData } = useCheckout();
 
   const navigate = useNavigate();
 
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
-  // 🔥 حماية
   const items = cart || [];
 
   const subtotal = items.reduce(
@@ -57,7 +55,7 @@ export default function MiniCart({ isOpen = true, onClose }: any) {
     }
   };
 
-  // 🔥 تجهيز checkout draft
+  // checkout draft
   const handleCheckout = () => {
     resetCheckout();
 

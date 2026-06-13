@@ -25,10 +25,6 @@ export interface ChatbotResponse {
   sessionId: number;
 }
 
-/* ===========================
-   CHAT SESSION TYPES
-=========================== */
-
 export interface ChatSession {
   id: number;
   title: string;
@@ -47,58 +43,32 @@ export interface ChatSessionDetails {
   messages: ChatMessage[];
 }
 
-/* ===========================
-   SEND MESSAGE
-=========================== */
-
+// Send a message to the chatbot
 export const sendChatMessage = async (
-  data: ChatbotRequest
+  data: ChatbotRequest,
 ): Promise<ChatbotResponse> => {
-  const response = await axiosInstance.post(
-    "/chatbot",
-    data
-  );
+  const response = await axiosInstance.post("/chatbot", data);
 
   return response.data;
 };
 
-/* ===========================
-   GET ALL SESSIONS
-=========================== */
+// Retrieve all chat sessions for the current user
+export const getChatSessions = async (): Promise<ChatSession[]> => {
+  const response = await axiosInstance.get("/chatbot/sessions");
 
-export const getChatSessions =
-  async (): Promise<ChatSession[]> => {
-    const response = await axiosInstance.get(
-      "/chatbot/sessions"
-    );
+  return response.data;
+};
 
-    return response.data;
-  };
+// Retrieve messages for a specific session
+export const getChatSessionDetails = async (
+  sessionId: number,
+): Promise<ChatSessionDetails> => {
+  const response = await axiosInstance.get(`/chatbot/sessions/${sessionId}`);
 
-/* ===========================
-   GET SESSION DETAILS
-=========================== */
+  return response.data;
+};
 
-export const getChatSessionDetails =
-  async (
-    sessionId: number
-  ): Promise<ChatSessionDetails> => {
-    const response = await axiosInstance.get(
-      `/chatbot/sessions/${sessionId}`
-    );
-
-    return response.data;
-  };
-
-/* ===========================
-   DELETE SESSION
-=========================== */
-
-export const deleteChatSession =
-  async (
-    sessionId: number
-  ): Promise<void> => {
-    await axiosInstance.delete(
-      `/chatbot/sessions/${sessionId}`
-    );
-  };
+// Delete a chat session
+export const deleteChatSession = async (sessionId: number): Promise<void> => {
+  await axiosInstance.delete(`/chatbot/sessions/${sessionId}`);
+};

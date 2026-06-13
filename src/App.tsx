@@ -2,22 +2,21 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { Toaster } from "./components/ui/sonner";
 
-// 📦 Contexts
+// Contexts
 import { AppProvider } from "./contexts/AppContext";
 import { CartProvider } from "./contexts/CartContext";
 import { CheckoutProvider } from "./contexts/CheckoutContext";
 import { ChatbotProvider } from "./contexts/ChatbotContext";
 
-// 🏗 Layouts & Components
+// Layouts & Components
 import { AdminInitializer } from "./components/AdminInitializer";
 import { PublicLayout } from "./layouts/PublicLayout";
 import { AdminLayout } from "./admin/layout/AdminLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
-// 🔥 استيراد الـ ScrollToTop الجديد
 import { ScrollToTop } from "./components/ScrollToTop";
 
-// 🌐 Public Pages
+// Public Pages
 import { HomePage } from "./pages/home/components/HomePage";
 import { ShopPage } from "./pages/Shop/ShopPage";
 import { ProductDetailPage } from "./pages/product/ProductDetailPage";
@@ -28,7 +27,7 @@ import { RecipeDetailPage } from "./pages/recipe/RecipeDetailPage";
 import { ChatbotPage } from "./pages/chatbot/ChatbotPage";
 import { LoginPage } from "./pages/auth/LoginPage";
 
-// 👤 User / Community Pages
+// User / Community Pages
 import ProfilePage from "./pages/profile/ProfilePage";
 import { CommunityPage } from "./pages/community/CommunityPage";
 import { MyPostsPage } from "./pages/community/MyPostsPage";
@@ -39,11 +38,11 @@ import { SavedRecipesPage } from "./pages/SavedItems/SavedRecipesPage";
 import { SavedProductsPage } from "./pages/SavedItems/SavedProductsPage";
 import { SavedPostsPage } from "./pages/SavedItems/SavedPostsPage";
 
-// 📦 User Orders Pages
+// User Orders Pages
 import { OrdersPage } from "./pages/orders/components/OrdersPage";
 import { OrderDetailsPage } from "./pages/orders/components/OrderDetailsPage";
 
-// 🔐 Admin Pages
+// Admin Pages
 import { DashboardPage } from "./admin/dashboard/DashboardPage";
 import { ProductsPage } from "./admin/products/ProductsPage";
 import { RecipesPage as AdminRecipesPage } from "./admin/recipes/RecipesPage";
@@ -86,12 +85,11 @@ export default function App() {
 
             <Toaster richColors position="top-right" />
             
-            {/* 🔥 حطينا المكون هنا عشان يشتغل على كل الـ Routes */}
             <ScrollToTop />
             <CheckoutSessionGuard />
 
             <Routes>
-              {/* 🌐 PUBLIC LAYOUT */}
+              {/* PUBLIC LAYOUT */}
               <Route path="/" element={<PublicLayout />}>
                 <Route index element={<HomePage />} />
                 <Route path="shop" element={<ShopPage />} />
@@ -103,7 +101,7 @@ export default function App() {
                 <Route path="chatbot" element={<ChatbotPage />} />
                 <Route path="login" element={<LoginPage />} />
 
-                {/* 👤 USER & COMMUNITY */}
+                {/* USER & COMMUNITY */}
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="saved-recipes" element={<SavedRecipesPage />} />
                 <Route path="saved-products" element={<SavedProductsPage />} />
@@ -113,7 +111,7 @@ export default function App() {
                 <Route path="my-posts" element={<MyPostsPage />} />
                 <Route path="posts/:id" element={<PostDetailsPage />} />
 
-                {/* 👻 GHOST CRAFT */}
+                {/* GHOST CRAFT */}
                 <Route path="ghost-craft" element={<GhostCraftPage />} />
                 <Route path="ghostcraft" element={<GhostCraftPage />} />
                 <Route
@@ -121,12 +119,12 @@ export default function App() {
                   element={<GhostCraftSummaryPage />}
                 />
 
-                {/* 📦 USER ORDERS */}
+                {/* USER ORDERS */}
                 <Route path="orders" element={<OrdersPage />} />
                 <Route path="orders/:id" element={<OrderDetailsPage />} />
               </Route>
 
-              {/* 🔐 ADMIN PROTECTED */}
+              {/* ADMIN PROTECTED */}
               <Route
                 path="/admin"
                 element={
@@ -144,7 +142,7 @@ export default function App() {
                 <Route path="orders" element={<AdminOrdersPage />} />
               </Route>
 
-              {/* ❌ 404 FALLBACK */}
+              {/* 404 FALLBACK */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </ChatbotProvider>
