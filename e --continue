@@ -1,0 +1,16 @@
+* [33m4728ef4[m[33m ([m[1;36mHEAD[m[33m)[m Resolve merge conflicts, implement resume payment flow, and clean code
+* [33me6b5335[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m chatbot floating feature validation and correction function usage
+[31m|[m * [33maa885ad[m[33m ([m[1;32mmain[m[33m)[m Implement resume payment flow and clean code
+[31m|[m[31m/[m  
+* [33m83d440d[m chatbot fully updated ui and validation with the correction of the floating icon
+*   [33mdc189fc[m fix: resolve merge conflicts
+[33m|[m[34m\[m  
+[33m|[m * [33m44a5759[m community files collected together
+[33m|[m *   [33m770db5d[m Merge branch 'main' of https://github.com/Mahmoud0Mahdy/freshmart
+[33m|[m [35m|[m[36m\[m  
+[33m|[m * [36m|[m [33m1370ba0[m footer and header update and links correction + logo added
+* [36m|[m [36m|[m [33mf2c96cd[m feat: add authentication guards for recipes, chatbot, ghost craft and user actions
+[36m|[m [36m|[m[36m/[m  
+[36m|[m[36m/[m[36m|[m   
+* [36m|[m [33ma25b6c3[m README
+[36m|[m[36m/[m  
