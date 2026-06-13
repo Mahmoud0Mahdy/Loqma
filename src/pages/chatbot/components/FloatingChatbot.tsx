@@ -4,8 +4,9 @@ import { useChatbotContext } from '../../../contexts/ChatbotContext';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { useScrollToBottom } from '../hooks/useScrollToBottom';
+// 🔥 استدعاء الـ AppContext عشان نعرف اليوزر عامل لوجين ولا لأ
+import { useApp } from '../../../contexts/AppContext'; 
 
-// 🔥 استدعاء ملف الـ CSS الجديد
 import './floating-chatbot.css';
 
 export function FloatingChatbot() {
@@ -17,15 +18,16 @@ export function FloatingChatbot() {
     sendMessage,
   } = useChatbotContext();
 
+  const { state } = useApp(); // 🔥 جلب حالة اليوزر
   const scrollRef = useScrollToBottom(messages);
   const location = useLocation();
 
-  // 🔥 لوجيك الحماية: لو بنحمل أو آخر رسالة من اليوزر والبوت مردش
   const lastMessage = messages[messages.length - 1];
   const isWaitingForBot = isLoading || (lastMessage?.role === "user");
 
-  // إخفاء الويدجت في الصفحات دي
+  // 🔥 السحر هنا: لو اليوزر مش عامل لوجين، الويدجت هيختفي تماماً كأنه مش موجود
   if (
+    !state.isAuthenticated || 
     location.pathname === '/chatbot' ||
     location.pathname === '/login' ||
     location.pathname === '/signup' ||
@@ -73,7 +75,7 @@ export function FloatingChatbot() {
           <div className="fcb-input-area">
             <ChatInput
               onSend={sendMessage}
-              disabled={isWaitingForBot} // 🔥 بنقفله لو البوت بيفكر
+              disabled={isWaitingForBot}
               isFirstMessage={messages.length === 0}
             />
           </div>
