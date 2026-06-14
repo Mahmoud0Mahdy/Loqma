@@ -22,23 +22,47 @@ export function OrderStatusDropdown({
 }: OrderStatusDropdownProps) {
   const [loading, setLoading] = useState(false);
 
-  // Convert status to string for the select component
   const dropdownValue = (currentStatus ?? OrderStatus.Pending).toString();
 
-  // Handle order status updates
   const handleStatusChange = async (newStatusString: string) => {
     const newStatusInt = parseInt(newStatusString, 10);
 
+    // Already in the selected status
+    if (newStatusInt === currentStatus) {
+      return;
+    }
+
+    // Cancelled orders cannot be changed
     if (currentStatus === OrderStatus.Cancelled) {
       toast.error("The order is already cancelled");
       return;
     }
 
+    // Delivered orders cannot be changed
+    if (currentStatus === OrderStatus.Delivered) {
+      toast.error("The order is already delivered");
+      return;
+    }
+
+    // Cancelled is only allowed from Pending
     if (
-      currentStatus === OrderStatus.Confirmed &&
-      newStatusInt === OrderStatus.Cancelled
+      newStatusInt === OrderStatus.Cancelled &&
+      currentStatus !== OrderStatus.Pending
     ) {
-      toast.error("Can't be cancelled, it is already confirmed");
+      toast.error(
+        `Can't be cancelled, it is already ${OrderStatus[
+          currentStatus
+        ].toLowerCase()}`,
+      );
+      return;
+    }
+
+    // Prevent moving back to previous statuses
+    if (
+      newStatusInt !== OrderStatus.Cancelled &&
+      newStatusInt < currentStatus
+    ) {
+      toast.error("Order status cannot be changed to a previous state");
       return;
     }
 
@@ -46,6 +70,7 @@ export function OrderStatusDropdown({
 
     try {
       await updateOrderStatus(orderId, newStatusInt as OrderStatus);
+
       toast.success("Order status updated");
       onStatusUpdated();
     } catch (error) {
@@ -55,7 +80,6 @@ export function OrderStatusDropdown({
     }
   };
 
-  // Check if order reached a final state
   const isTerminal =
     currentStatus === OrderStatus.Delivered ||
     currentStatus === OrderStatus.Cancelled;
@@ -66,21 +90,23 @@ export function OrderStatusDropdown({
       onValueChange={handleStatusChange}
       disabled={loading || isTerminal || !orderId}
     >
-      {/* Status selector */}
       <SelectTrigger className="w-[140px] h-8 text-xs">
         <SelectValue placeholder="Status" />
       </SelectTrigger>
 
-      {/* Available status options */}
       <SelectContent>
         <SelectItem value={OrderStatus.Pending.toString()}>Pending</SelectItem>
+
         <SelectItem value={OrderStatus.Confirmed.toString()}>
           Confirmed
         </SelectItem>
+
         <SelectItem value={OrderStatus.Shipped.toString()}>Shipped</SelectItem>
+
         <SelectItem value={OrderStatus.Delivered.toString()}>
           Delivered
         </SelectItem>
+
         <SelectItem value={OrderStatus.Cancelled.toString()}>
           Cancelled
         </SelectItem>

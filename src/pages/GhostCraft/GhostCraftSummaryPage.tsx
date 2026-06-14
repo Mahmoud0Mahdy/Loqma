@@ -6,11 +6,12 @@ import { Button } from "../../components/ui/button";
 import { toast } from "sonner@2.0.3";
 
 import { GhostCraftOrder } from "../../api/ghostCraftApi";
-
-import { addCartItem } from "../../api/cartApi";
+import { useCart } from "../../contexts/CartContext";
 
 export function GhostCraftSummaryPage() {
   const navigate = useNavigate();
+
+  const { addGhostCraftToCart } = useCart();
 
   const { state } = useLocation();
 
@@ -72,13 +73,11 @@ export function GhostCraftSummaryPage() {
     }
 
     try {
-      await addCartItem({
-        ghostCraftOrderId: Number(normalizedOrder.id),
-
-        quantity: 1,
-      });
+      await addGhostCraftToCart(Number(normalizedOrder.id));
 
       toast.success("Ghost Craft order added to cart!");
+
+      navigate("/cart");
     } catch (error) {
       console.error(error);
 
@@ -249,14 +248,6 @@ export function GhostCraftSummaryPage() {
             >
               <ShoppingCart size={20} className="mr-2" />
               Add to Cart
-            </Button>
-
-            <Button
-              onClick={() => navigate("/cart")}
-              variant="outline"
-              className="flex-1 border-green-600 text-green-600 hover:bg-green-50 rounded-full h-12"
-            >
-              View Cart
             </Button>
           </div>
         </div>
