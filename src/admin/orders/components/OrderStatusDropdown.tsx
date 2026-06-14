@@ -57,12 +57,16 @@ export function OrderStatusDropdown({
       return;
     }
 
-    // Prevent moving back to previous statuses
     if (
       newStatusInt !== OrderStatus.Cancelled &&
       newStatusInt < currentStatus
     ) {
-      toast.error("Order status cannot be changed to a previous state");
+      const currentName = OrderStatus[currentStatus].toLowerCase();
+      const targetName = OrderStatus[newStatusInt].toLowerCase();
+
+      toast.error(
+        `The order is already ${currentName} and can't be returned to ${targetName}`
+      );
       return;
     }
 
