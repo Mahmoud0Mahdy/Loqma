@@ -42,14 +42,6 @@ export function RecipesPage() {
     useRecipes(currentRecipes);
 
   const handleAiModeChange = (value: boolean) => {
-    if (!state.isAuthenticated) {
-      toast.error("Please login first to use AI recommendations");
-
-      navigate("/login");
-
-      return;
-    }
-
     setAiMode(value);
   };
 

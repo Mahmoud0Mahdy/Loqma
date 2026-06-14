@@ -1,51 +1,31 @@
 import { useEffect, useState } from "react";
-import {
-  getAdminRecipes,
-  getAllRecipes,
-} from "../../../api/recipeApi";
+import { getAdminRecipes, getAllRecipes } from "../../../api/recipeApi";
 
-const RECOMMENDATION_STORAGE_KEY =
-  "recommendedRecipeIds";
+const RECOMMENDATION_STORAGE_KEY = "recommendedRecipeIds";
 
-const RECIPES_PAGE_STORAGE_KEY =
-  "recipesCurrentPage";
+const RECIPES_PAGE_STORAGE_KEY = "recipesCurrentPage";
 
-const AI_RECIPES_PAGE_STORAGE_KEY =
-  "recipesAiCurrentPage";
+const AI_RECIPES_PAGE_STORAGE_KEY = "recipesAiCurrentPage";
 
-export function useRecipePagination(
-  aiMode: boolean = false
-) {
-  const [currentRecipes, setCurrentRecipes] =
-    useState<any[]>([]);
+export function useRecipePagination(aiMode: boolean = false) {
+  const [currentRecipes, setCurrentRecipes] = useState<any[]>([]);
 
-  const [currentPage, setCurrentPage] =
-    useState(() => {
-      const storageKey =
-        sessionStorage.getItem(
-          "recipesAiMode"
-        ) === "true"
-          ? AI_RECIPES_PAGE_STORAGE_KEY
-          : RECIPES_PAGE_STORAGE_KEY;
+  const [currentPage, setCurrentPage] = useState(() => {
+    const storageKey =
+      sessionStorage.getItem("recipesAiMode") === "true"
+        ? AI_RECIPES_PAGE_STORAGE_KEY
+        : RECIPES_PAGE_STORAGE_KEY;
 
-      const savedPage =
-        sessionStorage.getItem(
-          storageKey
-        );
+    const savedPage = sessionStorage.getItem(storageKey);
 
-      return savedPage
-        ? Number(savedPage)
-        : 1;
-    });
+    return savedPage ? Number(savedPage) : 1;
+  });
 
-  const [totalPages, setTotalPages] =
-    useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [hasMore, setHasMore] =
-    useState(true);
+  const [hasMore, setHasMore] = useState(true);
 
   // ================= SAVE PAGE =================
 
@@ -54,81 +34,68 @@ export function useRecipePagination(
       ? AI_RECIPES_PAGE_STORAGE_KEY
       : RECIPES_PAGE_STORAGE_KEY;
 
-    sessionStorage.setItem(
-      storageKey,
-      currentPage.toString()
-    );
+    sessionStorage.setItem(storageKey, currentPage.toString());
   }, [currentPage, aiMode]);
 
   // ================= LOAD RECIPES =================
 
-  const loadRecipes = async (
-    pageNumber: number
-  ) => {
+  const loadRecipes = async (pageNumber: number) => {
     setLoading(true);
 
     try {
       // ================= AI RECOMMENDATIONS =================
 
       if (aiMode) {
-        const storedIds = JSON.parse(
-          sessionStorage.getItem(
-            RECOMMENDATION_STORAGE_KEY
-          ) || "[]"
-        );
+        console.log("========== AI RECOMMENDATIONS ==========");
 
-        const recipes =
-          await getAllRecipes(storedIds);
+        const storedIds =
+          pageNumber === 1
+            ? []
+            : JSON.parse(
+                sessionStorage.getItem(RECOMMENDATION_STORAGE_KEY) || "[]",
+              );
 
-        setCurrentRecipes(
-          recipes || []
-        );
+        console.log("Stored IDs:", storedIds);
 
-        const newIds = (
-          recipes || []
-        ).map((r: any) =>
-          Number(r.id)
-        );
+        const recipes = await getAllRecipes(storedIds);
+
+        console.log("Recommendation Response:", recipes);
+
+        setCurrentRecipes(recipes || []);
+
+        const newIds = (recipes || []).map((r: any) => Number(r.id));
+
+        console.log("New IDs:", newIds);
 
         sessionStorage.setItem(
           RECOMMENDATION_STORAGE_KEY,
-          JSON.stringify([
-            ...storedIds,
-            ...newIds,
-          ])
+          JSON.stringify([...storedIds, ...newIds]),
         );
 
-        setHasMore(
-          (recipes?.length ?? 0) > 0
-        );
+        const hasRecipes = (recipes?.length ?? 0) > 0;
+
+        setHasMore(hasRecipes);
+
+        console.log("Has More:", hasRecipes);
+
+        console.log("Recipes Count:", recipes?.length ?? 0);
 
         return;
       }
 
       // ================= NORMAL RECIPES =================
 
-      const response =
-        await getAdminRecipes(
-          pageNumber,
-          30
-        );
+      const response = await getAdminRecipes(pageNumber, 30);
 
-      setCurrentRecipes(
-        response.data || []
-      );
+      setCurrentRecipes(response.data || []);
 
-      const pages = Math.ceil(
-        response.totalCount /
-          response.pageSize
-      );
+      const pages = Math.ceil(response.totalCount / response.pageSize);
 
       setTotalPages(pages);
 
-      setHasMore(
-        pageNumber < pages
-      );
+      setHasMore(pageNumber < pages);
     } catch (error) {
-      console.error(error);
+      console.error("LOAD RECIPES ERROR:", error);
     } finally {
       setLoading(false);
     }
@@ -141,16 +108,9 @@ export function useRecipePagination(
       ? AI_RECIPES_PAGE_STORAGE_KEY
       : RECIPES_PAGE_STORAGE_KEY;
 
-    const savedPage =
-      sessionStorage.getItem(
-        storageKey
-      );
+    const savedPage = sessionStorage.getItem(storageKey);
 
-    setCurrentPage(
-      savedPage
-        ? Number(savedPage)
-        : 1
-    );
+    setCurrentPage(savedPage ? Number(savedPage) : 1);
   }, [aiMode]);
 
   // ================= LOAD =================
@@ -163,21 +123,15 @@ export function useRecipePagination(
 
   const handleNext = () => {
     if (aiMode) {
-      setCurrentPage(
-        (prev) => prev + 1
-      );
+      setCurrentPage((prev) => prev + 1);
       return;
     }
 
-    if (
-      currentPage >= totalPages
-    ) {
+    if (currentPage >= totalPages) {
       return;
     }
 
-    setCurrentPage(
-      (prev) => prev + 1
-    );
+    setCurrentPage((prev) => prev + 1);
   };
 
   // ================= PREVIOUS =================
@@ -187,28 +141,20 @@ export function useRecipePagination(
       return;
     }
 
-    setCurrentPage(
-      (prev) => prev - 1
-    );
+    setCurrentPage((prev) => prev - 1);
   };
 
   // ================= REFRESH AI =================
 
-  const refreshAiRecommendations =
-    async () => {
-      sessionStorage.removeItem(
-        RECOMMENDATION_STORAGE_KEY
-      );
+  const refreshAiRecommendations = async () => {
+    sessionStorage.removeItem(RECOMMENDATION_STORAGE_KEY);
 
-      sessionStorage.setItem(
-        AI_RECIPES_PAGE_STORAGE_KEY,
-        "1"
-      );
+    sessionStorage.setItem(AI_RECIPES_PAGE_STORAGE_KEY, "1");
 
-      setCurrentPage(1);
+    setCurrentPage(1);
 
-      await loadRecipes(1);
-    };
+    await loadRecipes(1);
+  };
 
   return {
     currentPage,

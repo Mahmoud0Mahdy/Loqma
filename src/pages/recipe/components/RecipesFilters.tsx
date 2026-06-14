@@ -1,6 +1,5 @@
 import { Search } from "lucide-react";
 import { Input } from "../../../components/ui/input";
-import { useApp } from "../../../contexts/AppContext";
 
 import {
   Select,
@@ -36,8 +35,6 @@ export function RecipesFilters({
   aiMode,
   onAiModeChange,
 }: Props) {
-  const { state } = useApp();
-
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
@@ -68,17 +65,10 @@ export function RecipesFilters({
           {resultsCount} recipes found
         </div>
 
-        <label
-          className={`flex items-center gap-2 select-none ${
-            !state.isAuthenticated
-              ? "opacity-50 cursor-not-allowed"
-              : "cursor-pointer"
-          }`}
-        >
+        <label className="flex items-center gap-2 select-none cursor-pointer">
           <input
             type="checkbox"
             checked={aiMode}
-            disabled={!state.isAuthenticated}
             onChange={(e) =>
               onAiModeChange(
                 e.target.checked
