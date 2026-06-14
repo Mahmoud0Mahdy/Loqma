@@ -189,7 +189,7 @@ export function LoginPage() {
           </div>
 
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome to FreshMart
+            Welcome to Loqma
           </h1>
 
           <p className="text-gray-600 mt-2">
