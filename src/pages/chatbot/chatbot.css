@@ -1,5 +1,5 @@
 /* ============================================================
-   chatbot.css - Clean CSS Architecture (No Tailwind)
+   Chatbot Main Layout & Architecture
    ============================================================ */
 
 /* ── Main Layout ───────────────────────────────────────── */
@@ -89,18 +89,15 @@
   padding-left: 8px;
 }
 
+/* ── Sidebar History & Marquee Animation ───────────────── */
 .cb-history-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
+  padding: 4px 12px;
   border-radius: 10px;
-  cursor: pointer;
   transition: background-color 0.2s;
-  border: none;
-  background: transparent;
   width: 100%;
-  text-align: left;
   color: #475569;
 }
 
@@ -109,25 +106,72 @@
   color: #0f172a;
 }
 
+.cb-history-main-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 10px 0;
+  text-align: left;
+  color: inherit;
+  flex: 1;
+  min-width: 0;
+}
+
 .cb-history-item-content {
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 14px;
   font-weight: 500;
-  white-space: nowrap;
+  width: 100%;
   overflow: hidden;
+  position: relative;
+}
+
+.cb-history-title-wrap {
+  display: inline-block;
+  white-space: nowrap;
+  transition: transform 0.3s ease;
+  width: 140px;
+}
+
+.cb-history-item:not(:hover) .cb-history-title-wrap {
   text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+}
+
+.cb-history-item:hover .cb-history-title-wrap {
+  animation: marquee-pan 4s ease-in-out infinite alternate;
+}
+
+@keyframes marquee-pan {
+  0%, 15% { transform: translateX(0); }
+  85%, 100% { transform: translateX(calc(-100% + 130px)); }
 }
 
 .cb-delete-btn {
   background: transparent;
   border: none;
-  color: #ef4444;
+  color: #64748b;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
+  border-radius: 8px;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cb-delete-btn:hover {
+  color: #ef4444;
+  background-color: #fee2e2;
 }
 
 .cb-history-item:hover .cb-delete-btn {
@@ -257,7 +301,7 @@
   text-overflow: ellipsis;
 }
 
-/* ── Input Area ────────────────────────────────────────── */
+/* ── Input Area & Actions ──────────────────────────────── */
 .cb-input-area {
   padding: 20px 32px;
   background-color: #ffffff;
@@ -296,80 +340,14 @@
   font-family: inherit;
 }
 
-.cb-textarea::placeholder {
-  color: #94a3b8;
-}
-
-.cb-send-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #16a34a;
-  color: white;
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background-color 0.2s;
-}
-
-.cb-send-btn:hover:not(:disabled) {
-  background-color: #15803d;
-}
-
-.cb-send-btn:disabled {
-  background-color: #cbd5e1;
-  cursor: not-allowed;
-}
-/* ============================================================
-   New Chatbot Features (Marquee, Expand Input, Validation)
-   ============================================================ */
-
-/* ── Sidebar Marquee Animation ─────────────────────────── */
-.cb-history-item-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  width: 170px; 
-  overflow: hidden; 
-  position: relative;
-}
-
-.cb-history-title-wrap {
-  display: inline-block;
-  white-space: nowrap;
-  transition: transform 0.3s ease;
-}
-
-.cb-history-item:not(:hover) .cb-history-title-wrap {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  width: 100%;
-}
-
-.cb-history-item:hover .cb-history-title-wrap {
-  animation: marquee-pan 4s ease-in-out infinite alternate;
-}
-
-@keyframes marquee-pan {
-  0%, 15% { transform: translateX(0); }
-  85%, 100% { transform: translateX(calc(-100% + 140px)); }
-}
-
-/* ── Input Actions & Expansion ─────────────────────────── */
-.cb-input-box {
-  display: flex;
-  align-items: flex-end; 
-}
-
 .cb-textarea.expanded {
   height: 250px !important;
   max-height: 400px;
   overflow-y: auto;
+}
+
+.cb-textarea::placeholder {
+  color: #94a3b8;
 }
 
 .cb-input-actions {
@@ -408,4 +386,28 @@
 .cb-action-btn:hover {
   background-color: #f1f5f9;
   color: #0f172a;
+}
+
+.cb-send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+.cb-send-btn:hover:not(:disabled) {
+  background-color: #15803d;
+}
+
+.cb-send-btn:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
 }
